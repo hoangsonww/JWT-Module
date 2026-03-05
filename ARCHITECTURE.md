@@ -82,21 +82,6 @@ graph TB
     AS --> UT
     TS --> TB
     RL --> RW
-
-    style CL fill:#e1f5fe
-    style MW fill:#fff3e0
-    style RL fill:#fff3e0
-    style RT fill:#fff3e0
-    style VAL fill:#fff3e0
-    style AS fill:#e8f5e9
-    style TS fill:#e8f5e9
-    style PS fill:#e8f5e9
-    style ERR fill:#e8f5e9
-    style UM fill:#fce4ec
-    style TB fill:#fce4ec
-    style LA fill:#fce4ec
-    style UT fill:#fce4ec
-    style RW fill:#fce4ec
 ```
 
 ---
@@ -145,23 +130,6 @@ graph TD
     TOKEN --> JWT[jsonwebtoken]
     PASSWORD --> BCRYPT[bcrypt]
     AUTH_SVC --> CUID2["@paralleldrive/cuid2"]
-
-    style SERVER fill:#e3f2fd
-    style APP fill:#fff3e0
-    style AUTH_ROUTER fill:#fff3e0
-    style MW fill:#fff3e0
-    style RATE fill:#fff3e0
-    style VALID fill:#fff3e0
-    style AUTH_SVC fill:#e8f5e9
-    style TOKEN fill:#e8f5e9
-    style PASSWORD fill:#e8f5e9
-    style ERRORS fill:#e8f5e9
-    style TYPES fill:#e8f5e9
-    style INDEX fill:#e8f5e9
-    style ZOD fill:#f3e5f5
-    style JWT fill:#f3e5f5
-    style BCRYPT fill:#f3e5f5
-    style CUID2 fill:#f3e5f5
 ```
 
 ---
@@ -315,12 +283,6 @@ flowchart TD
     ALL --> BLACKLIST
 
     BLACKLIST -->|pruneExpiredTokens| PRUNE[Remove entries<br/>past TTL expiry]
-
-    style GEN fill:#e8f5e9
-    style AT fill:#e3f2fd
-    style RT fill:#e3f2fd
-    style BLACKLIST fill:#ffcdd2
-    style PRUNE fill:#fff3e0
 ```
 
 ### Token Lifecycle Summary
@@ -370,19 +332,6 @@ graph TB
 
     L1A --> L1B --> L1C --> L2A --> L3A --> L4A
     L4A --> L4B --> L4C --> L5A --> L5B --> L5C --> L5D
-
-    style L1A fill:#e3f2fd
-    style L1B fill:#e3f2fd
-    style L1C fill:#e3f2fd
-    style L2A fill:#fff3e0
-    style L3A fill:#e8f5e9
-    style L4A fill:#f3e5f5
-    style L4B fill:#f3e5f5
-    style L4C fill:#f3e5f5
-    style L5A fill:#ffcdd2
-    style L5B fill:#ffcdd2
-    style L5C fill:#ffcdd2
-    style L5D fill:#ffcdd2
 ```
 
 ---
@@ -460,10 +409,6 @@ flowchart TD
     subgraph Zod Validation
         ZOD[safeParse fails] --> ZERR[400 INVALID_INPUT<br/>joined issue messages]
     end
-
-    style REQ fill:#e3f2fd
-    style RES fill:#c8e6c9
-    style INTERNAL fill:#ffcdd2
 ```
 
 **Error flow:**
