@@ -8,6 +8,49 @@
       name="description"
       content="Comprehensive documentation for the JWT Authentication Module — Express + TypeScript enterprise-grade auth system"
     />
+    <meta
+      name="keywords"
+      content="JWT, authentication, Express, TypeScript, API security, refresh token, access token, Node.js"
+    />
+    <meta name="author" content="Son Nguyen" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#0d1117" />
+    <link rel="canonical" href="https://hoangsonww.github.io/JWT-Module/" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="apple-touch-icon" href="favicon.svg" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="JWT Module" />
+    <meta property="og:title" content="JWT Module — Documentation Wiki" />
+    <meta
+      property="og:description"
+      content="Comprehensive documentation for the JWT Authentication Module — Express + TypeScript enterprise-grade auth system"
+    />
+    <meta property="og:url" content="https://hoangsonww.github.io/JWT-Module/" />
+    <meta property="og:image" content="https://hoangsonww.github.io/JWT-Module/favicon.svg" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="JWT Module — Documentation Wiki" />
+    <meta
+      name="twitter:description"
+      content="Comprehensive documentation for the JWT Authentication Module — Express + TypeScript enterprise-grade auth system"
+    />
+    <meta name="twitter:image" content="https://hoangsonww.github.io/JWT-Module/favicon.svg" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "JWT Module Documentation Wiki",
+        "description": "Comprehensive documentation for the JWT Authentication Module built with Express and TypeScript.",
+        "author": {
+          "@type": "Person",
+          "name": "Son Nguyen"
+        },
+        "url": "https://hoangsonww.github.io/JWT-Module/",
+        "about": ["JWT authentication", "Express API security", "TypeScript backend"]
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -180,23 +223,50 @@ curl http://localhost:5001/auth/me \
 
           <div class="mermaid-wrapper">
             <div class="mermaid-title">System Architecture</div>
+            <!-- prettier-ignore -->
             <div class="mermaid">
-              graph TB subgraph Client["Client Layer"] Browser["Browser / Mobile App"] CLI["CLI /
-              curl"] end subgraph API["API Layer (src/api/)"] Express["Express App<br />helmet,
-              cors, json"] RL["Rate Limiter<br />Per-IP sliding window"] Val["Zod Validation<br />Schema-based
-              input check"] MW["Auth Middleware<br />Bearer token verification"] Router["Auth
-              Router<br />9 endpoints"] end subgraph Auth["Auth Layer (src/auth/)"] AS["Auth
-              Service<br />register, login, refresh<br />logout, password, email"] TM["Token
-              Manager<br />JWT sign/verify<br />Revocation blacklist"] PW["Password Utils<br />bcrypt
-              hash/verify<br />Strength validation"] ERR["Error System<br />AuthError + codes"] end
-              subgraph Storage["In-Memory Storage"] Users["Users Map&lt;id, User&gt;"]
-              Tokens["Revoked Tokens Map"] Sessions["User Tokens Map"] Attempts["Login Attempts
-              Map"] end Browser --> Express CLI --> Express Express --> RL RL --> Val Val --> MW MW
-              --> Router Router --> AS AS --> TM AS --> PW AS --> ERR AS --> Users TM --> Tokens AS
-              --> Sessions AS --> Attempts style Client fill:#161b22,stroke:#30363d,color:#e6edf3
-              style API fill:#161b22,stroke:#1f6feb,color:#e6edf3 style Auth
-              fill:#161b22,stroke:#bc8cff,color:#e6edf3 style Storage
-              fill:#161b22,stroke:#3fb950,color:#e6edf3
+graph TB
+  subgraph Client["Client Layer"]
+    Browser["Browser / Mobile App"]
+    CLI["CLI / curl"]
+  end
+  subgraph API["API Layer (src/api/)"]
+    Express["Express App<br />helmet, cors, json"]
+    RL["Rate Limiter<br />Per-IP sliding window"]
+    Val["Zod Validation<br />Schema-based input check"]
+    MW["Auth Middleware<br />Bearer token verification"]
+    Router["Auth Router<br />9 endpoints"]
+  end
+  subgraph Auth["Auth Layer (src/auth/)"]
+    AS["Auth Service<br />register, login, refresh<br />logout, password, email"]
+    TM["Token Manager<br />JWT sign/verify<br />Revocation blacklist"]
+    PW["Password Utils<br />bcrypt hash/verify<br />Strength validation"]
+    ERR["Error System<br />AuthError + codes"]
+  end
+  subgraph Storage["In-Memory Storage"]
+    Users["Users Map&lt;id, User&gt;"]
+    Tokens["Revoked Tokens Map"]
+    Sessions["User Tokens Map"]
+    Attempts["Login Attempts Map"]
+  end
+  Browser --> Express
+  CLI --> Express
+  Express --> RL
+  RL --> Val
+  Val --> MW
+  MW --> Router
+  Router --> AS
+  AS --> TM
+  AS --> PW
+  AS --> ERR
+  AS --> Users
+  TM --> Tokens
+  AS --> Sessions
+  AS --> Attempts
+  style Client fill:#161b22,stroke:#30363d,color:#e6edf3
+  style API fill:#161b22,stroke:#1f6feb,color:#e6edf3
+  style Auth fill:#161b22,stroke:#bc8cff,color:#e6edf3
+  style Storage fill:#161b22,stroke:#3fb950,color:#e6edf3
             </div>
           </div>
 
@@ -230,46 +300,92 @@ curl http://localhost:5001/auth/me \
             <div class="mermaid-title">
               Authentication Sequence — Register, Login, Use, Refresh, Logout
             </div>
+            <!-- prettier-ignore -->
             <div class="mermaid">
-              sequenceDiagram participant C as Client participant API as API Layer participant AS as
-              Auth Service participant TM as Token Manager participant PW as Password Utils
-              participant DB as In-Memory Store Note over C,DB: Registration Flow C->>API: POST
-              /auth/register {email, password} API->>API: Zod validation + rate limit API->>AS:
-              register(input) AS->>PW: validatePasswordStrength(password) PW-->>AS: pass / throw
-              WEAK_PASSWORD AS->>PW: hashPassword(password) PW-->>AS: bcrypt hash (12 rounds)
-              AS->>DB: store User{id, email, hash, createdAt} AS->>TM: generateTokens({userId,
-              email}) TM-->>AS: {accessToken, refreshToken} AS-->>API: AuthTokens API-->>C: 201
-              {tokens: {accessToken, refreshToken}} Note over C,DB: Login Flow C->>API: POST
-              /auth/login {email, password} API->>API: Zod validation + rate limit API->>AS:
-              login(input) AS->>DB: findByEmail(email) AS->>AS: check lockout status AS->>PW:
-              verifyPassword(input, hash) PW-->>AS: true/false AS->>TM: generateTokens({userId,
-              email}) TM-->>AS: {accessToken, refreshToken} AS-->>API: AuthTokens API-->>C: 200
-              {tokens} Note over C,DB: Authenticated Request C->>API: GET /auth/me [Authorization:
-              Bearer token] API->>TM: verifyAccessToken(token) TM-->>API: {userId, email} API->>AS:
-              getUserById(userId) AS->>DB: users.get(id) AS-->>API: User API-->>C: 200 {id, email,
-              createdAt} Note over C,DB: Token Refresh C->>API: POST /auth/refresh {refreshToken}
-              API->>AS: refreshTokens(refreshToken) AS->>TM: verifyRefreshToken(token) TM-->>AS:
-              payload AS->>TM: revokeRefreshToken(oldToken) AS->>TM: generateTokens(payload)
-              TM-->>AS: new {accessToken, refreshToken} AS-->>API: AuthTokens API-->>C: 200 {tokens}
-              Note over C,DB: Logout C->>API: POST /auth/logout {refreshToken} API->>AS:
-              logout(refreshToken) AS->>TM: revokeRefreshToken(token) AS-->>API: void API-->>C: 200
-              "Logged out successfully"
+sequenceDiagram
+  participant C as Client
+  participant API as API Layer
+  participant AS as Auth Service
+  participant TM as Token Manager
+  participant PW as Password Utils
+  participant DB as In-Memory Store
+  Note over C,DB: Registration Flow
+  C->>API: POST /auth/register {email, password}
+  API->>API: Zod validation + rate limit
+  API->>AS: register(input)
+  AS->>PW: validatePasswordStrength(password)
+  PW-->>AS: pass / throw WEAK_PASSWORD
+  AS->>PW: hashPassword(password)
+  PW-->>AS: bcrypt hash (12 rounds)
+  AS->>DB: store User{id, email, hash, createdAt}
+  AS->>TM: generateTokens({userId, email})
+  TM-->>AS: {accessToken, refreshToken}
+  AS-->>API: AuthTokens
+  API-->>C: 201 {tokens: {accessToken, refreshToken}}
+  Note over C,DB: Login Flow
+  C->>API: POST /auth/login {email, password}
+  API->>API: Zod validation + rate limit
+  API->>AS: login(input)
+  AS->>DB: findByEmail(email)
+  AS->>AS: check lockout status
+  AS->>PW: verifyPassword(input, hash)
+  PW-->>AS: true/false
+  AS->>TM: generateTokens({userId, email})
+  TM-->>AS: {accessToken, refreshToken}
+  AS-->>API: AuthTokens
+  API-->>C: 200 {tokens}
+  Note over C,DB: Authenticated Request
+  C->>API: GET /auth/me [Authorization: Bearer token]
+  API->>TM: verifyAccessToken(token)
+  TM-->>API: {userId, email}
+  API->>AS: getUserById(userId)
+  AS->>DB: users.get(id)
+  AS-->>API: User
+  API-->>C: 200 {id, email, createdAt}
+  Note over C,DB: Token Refresh
+  C->>API: POST /auth/refresh {refreshToken}
+  API->>AS: refreshTokens(refreshToken)
+  AS->>TM: verifyRefreshToken(token)
+  TM-->>AS: payload
+  AS->>TM: revokeRefreshToken(oldToken)
+  AS->>TM: generateTokens(payload)
+  TM-->>AS: new {accessToken, refreshToken}
+  AS-->>API: AuthTokens
+  API-->>C: 200 {tokens}
+  Note over C,DB: Logout
+  C->>API: POST /auth/logout {refreshToken}
+  API->>AS: logout(refreshToken)
+  AS->>TM: revokeRefreshToken(token)
+  AS-->>API: void
+  API-->>C: 200 Logged out successfully
             </div>
           </div>
 
           <h3>Account Lockout Flow</h3>
           <div class="mermaid-wrapper">
             <div class="mermaid-title">Login Attempt Tracking &amp; Account Lockout</div>
+            <!-- prettier-ignore -->
             <div class="mermaid">
-              flowchart TD A["POST /auth/login"] --> B{"Account locked?"} B -->|"Yes (within 15
-              min)"| C["423 ACCOUNT_LOCKED"] B -->|No| D["Find user by email"] D --> E{"User
-              exists?"} E -->|No| F["401 INVALID_CREDENTIALS"] E -->|Yes| G["Verify password with
-              bcrypt"] G --> H{"Password valid?"} H -->|No| I["Increment attempt counter"] I -->
-              J{"attempts >= 5?"} J -->|Yes| K["Lock account for 15 minutes"] J -->|No| F K --> F H
-              -->|Yes| L["Clear attempt counter"] L --> M["Generate token pair"] M --> N["200 +
-              AuthTokens"] style C fill:#f85149,stroke:#f85149,color:#fff style F
-              fill:#f85149,stroke:#f85149,color:#fff style N fill:#238636,stroke:#238636,color:#fff
-              style K fill:#d29922,stroke:#d29922,color:#fff
+flowchart TD
+  A["POST /auth/login"] --> B{"Account locked?"}
+  B -->|"Yes (within 15 min)"| C["423 ACCOUNT_LOCKED"]
+  B -->|No| D["Find user by email"]
+  D --> E{"User exists?"}
+  E -->|No| F["401 INVALID_CREDENTIALS"]
+  E -->|Yes| G["Verify password with bcrypt"]
+  G --> H{"Password valid?"}
+  H -->|No| I["Increment attempt counter"]
+  I --> J{"attempts >= 5?"}
+  J -->|Yes| K["Lock account for 15 minutes"]
+  J -->|No| F
+  K --> F
+  H -->|Yes| L["Clear attempt counter"]
+  L --> M["Generate token pair"]
+  M --> N["200 + AuthTokens"]
+  style C fill:#f85149,stroke:#f85149,color:#fff
+  style F fill:#f85149,stroke:#f85149,color:#fff
+  style N fill:#238636,stroke:#238636,color:#fff
+  style K fill:#d29922,stroke:#d29922,color:#fff
             </div>
           </div>
         </section>
@@ -281,28 +397,54 @@ curl http://localhost:5001/auth/me \
           <h3>Token Lifecycle States</h3>
           <div class="mermaid-wrapper">
             <div class="mermaid-title">JWT Token State Machine</div>
+            <!-- prettier-ignore -->
             <div class="mermaid">
-              stateDiagram-v2 [*] --> Generated: generateTokens() Generated --> Active: Token issued
-              to client state Active { AccessToken: Access Token (15 min) RefreshToken: Refresh
-              Token (7 days) } Active --> Expired: TTL exceeded Active --> Revoked: logout / refresh
-              rotation Revoked --> Pruned: pruneExpiredTokens() Expired --> [*]: Discarded Pruned
-              --> [*]: Removed from blacklist note right of Active Access: used in Authorization
-              header Refresh: used to get new token pair end note note right of Revoked Stored in
-              revokedTokens Map with TTL = 7 days end note
+stateDiagram-v2
+  [*] --> Generated: generateTokens()
+  Generated --> Active: Token issued to client
+  state Active {
+    AccessToken: Access Token (15 min)
+    RefreshToken: Refresh Token (7 days)
+  }
+  Active --> Expired: TTL exceeded
+  Active --> Revoked: logout / refresh rotation
+  Revoked --> Pruned: pruneExpiredTokens()
+  Expired --> [*]: Discarded
+  Pruned --> [*]: Removed from blacklist
+  note right of Active
+    Access: used in Authorization header
+    Refresh: used to get new token pair
+  end note
+  note right of Revoked
+    Stored in revokedTokens Map
+    TTL = 7 days
+  end note
             </div>
           </div>
 
           <h3>Token Rotation</h3>
           <div class="mermaid-wrapper">
             <div class="mermaid-title">Refresh Token Rotation Sequence</div>
+            <!-- prettier-ignore -->
             <div class="mermaid">
-              sequenceDiagram participant C as Client participant S as Server participant BL as
-              Revocation Blacklist Note over C: Access token expired C->>S: POST /auth/refresh
-              {refreshToken: RT1} S->>BL: Is RT1 revoked? BL-->>S: No S->>S: Verify RT1 signature +
-              expiry S->>BL: Revoke RT1 (add to blacklist) S->>S: Generate new AT2 + RT2 S-->>C:
-              {accessToken: AT2, refreshToken: RT2} Note over C: Client must use RT2 next time Note
-              over C: RT1 is now permanently invalid C->>S: POST /auth/refresh {refreshToken: RT1}
-              S->>BL: Is RT1 revoked? BL-->>S: Yes - REVOKED S-->>C: 401 INVALID_TOKEN
+sequenceDiagram
+  participant C as Client
+  participant S as Server
+  participant BL as Revocation Blacklist
+  Note over C: Access token expired
+  C->>S: POST /auth/refresh {refreshToken: RT1}
+  S->>BL: Is RT1 revoked?
+  BL-->>S: No
+  S->>S: Verify RT1 signature + expiry
+  S->>BL: Revoke RT1 (add to blacklist)
+  S->>S: Generate new AT2 + RT2
+  S-->>C: {accessToken: AT2, refreshToken: RT2}
+  Note over C: Client must use RT2 next time
+  Note over C: RT1 is now permanently invalid
+  C->>S: POST /auth/refresh {refreshToken: RT1}
+  S->>BL: Is RT1 revoked?
+  BL-->>S: Yes - REVOKED
+  S-->>C: 401 INVALID_TOKEN
             </div>
           </div>
 
@@ -343,15 +485,30 @@ curl http://localhost:5001/auth/me \
           <h3>Error Architecture</h3>
           <div class="mermaid-wrapper">
             <div class="mermaid-title">Error Propagation — AuthError to HTTP Response</div>
+            <!-- prettier-ignore -->
             <div class="mermaid">
-              flowchart LR subgraph AuthLayer["Auth Layer"] AE["throw new AuthError(code, message)"]
-              end subgraph Router["Auth Router"] Catch["catch (err)"] Check{"err instanceof
-              AuthError?"} Map["ERROR_STATUS_MAP[err.code]"] Generic["500 INTERNAL_ERROR"] end
-              subgraph Response["HTTP Response"] R1["{ error: { code, message } }"] end AE --> Catch
-              Catch --> Check Check -->|Yes| Map Check -->|No| Generic Map --> R1 Generic --> R1
-              style AuthLayer fill:#161b22,stroke:#bc8cff,color:#e6edf3 style Router
-              fill:#161b22,stroke:#1f6feb,color:#e6edf3 style Response
-              fill:#161b22,stroke:#3fb950,color:#e6edf3
+flowchart LR
+  subgraph AuthLayer["Auth Layer"]
+    AE["throw new AuthError(code, message)"]
+  end
+  subgraph Router["Auth Router"]
+    Catch["catch (err)"]
+    Check{"err instanceof AuthError?"}
+    Map["ERROR_STATUS_MAP[err.code]"]
+    Generic["500 INTERNAL_ERROR"]
+  end
+  subgraph Response["HTTP Response"]
+    R1["{ error: { code, message } }"]
+  end
+  AE --> Catch
+  Catch --> Check
+  Check -->|Yes| Map
+  Check -->|No| Generic
+  Map --> R1
+  Generic --> R1
+  style AuthLayer fill:#161b22,stroke:#bc8cff,color:#e6edf3
+  style Router fill:#161b22,stroke:#1f6feb,color:#e6edf3
+  style Response fill:#161b22,stroke:#3fb950,color:#e6edf3
             </div>
           </div>
 
@@ -847,21 +1004,32 @@ curl http://localhost:5001/auth/me \
 
           <div class="mermaid-wrapper">
             <div class="mermaid-title">Request Processing Pipeline</div>
+            <!-- prettier-ignore -->
             <div class="mermaid">
-              flowchart LR REQ["Incoming Request"] --> HELMET["Helmet<br />Security Headers"] HELMET
-              --> CORS["CORS<br />Origin Check"] CORS --> LOG["Request Logger"] LOG --> JSON["JSON
-              Parser<br />10kb limit"] JSON --> ROUTE{"Route Match?"} ROUTE -->|"Rate limited
-              route"| RL["Rate Limiter<br />Per-IP window"] RL --> RLCHECK{"Under limit?"} RLCHECK
-              -->|No| R429["429 Too Many Requests"] RLCHECK -->|Yes| ZOD["Zod Validation"] ROUTE
-              -->|"Auth required"| MW["Auth Middleware<br />Verify Bearer token"] MW -->
-              MWCHECK{"Valid token?"} MWCHECK -->|No| R401["401 Unauthorized"] MWCHECK -->|Yes| ZOD
-              ROUTE -->|"Health check"| HEALTH["200 OK"] ZOD --> ZODCHECK{"Valid body?"} ZODCHECK
-              -->|No| R400["400 Validation Error"] ZODCHECK -->|Yes| HANDLER["Route Handler"]
-              HANDLER --> RES["JSON Response"] style R429 fill:#d29922,stroke:#d29922,color:#fff
-              style R401 fill:#f85149,stroke:#f85149,color:#fff style R400
-              fill:#f85149,stroke:#f85149,color:#fff style HEALTH
-              fill:#238636,stroke:#238636,color:#fff style RES
-              fill:#238636,stroke:#238636,color:#fff
+flowchart LR
+  REQ["Incoming Request"] --> HELMET["Helmet<br />Security Headers"]
+  HELMET --> CORS["CORS<br />Origin Check"]
+  CORS --> LOG["Request Logger"]
+  LOG --> JSON["JSON Parser<br />10kb limit"]
+  JSON --> ROUTE{"Route Match?"}
+  ROUTE -->|"Rate limited route"| RL["Rate Limiter<br />Per-IP window"]
+  RL --> RLCHECK{"Under limit?"}
+  RLCHECK -->|No| R429["429 Too Many Requests"]
+  RLCHECK -->|Yes| ZOD["Zod Validation"]
+  ROUTE -->|"Auth required"| MW["Auth Middleware<br />Verify Bearer token"]
+  MW --> MWCHECK{"Valid token?"}
+  MWCHECK -->|No| R401["401 Unauthorized"]
+  MWCHECK -->|Yes| ZOD
+  ROUTE -->|"Health check"| HEALTH["200 OK"]
+  ZOD --> ZODCHECK{"Valid body?"}
+  ZODCHECK -->|No| R400["400 Validation Error"]
+  ZODCHECK -->|Yes| HANDLER["Route Handler"]
+  HANDLER --> RES["JSON Response"]
+  style R429 fill:#d29922,stroke:#d29922,color:#fff
+  style R401 fill:#f85149,stroke:#f85149,color:#fff
+  style R400 fill:#f85149,stroke:#f85149,color:#fff
+  style HEALTH fill:#238636,stroke:#238636,color:#fff
+  style RES fill:#238636,stroke:#238636,color:#fff
             </div>
           </div>
 
@@ -910,22 +1078,44 @@ curl http://localhost:5001/auth/me \
 
           <div class="mermaid-wrapper">
             <div class="mermaid-title">Security Defense Layers</div>
+            <!-- prettier-ignore -->
             <div class="mermaid">
-              graph TB subgraph L1["Layer 1: Transport"] HELMET["Helmet — Security Headers<br />X-Frame-Options,
-              CSP, HSTS"] CORS["CORS — Origin Whitelist"] TLS["TLS Termination (via LB)"] end
-              subgraph L2["Layer 2: Input"] RL["Rate Limiter — Per-IP Window"] JSON["JSON Body Limit
-              — 10kb"] ZOD["Zod Schema Validation"] end subgraph L3["Layer 3: Authentication"]
-              JWT["JWT Verification — HS256"] ROT["Token Rotation on Refresh"] REV["Token Revocation
-              Blacklist"] LOCK["Account Lockout — 5 attempts / 15min"] end subgraph L4["Layer 4:
-              Data"] BCRYPT["bcrypt — 12 salt rounds"] PWPOL["Password Policy — 8+ chars,
-              letter+digit"] NOPII["No PII in tokens beyond email"] end subgraph L5["Layer 5:
-              Runtime"] NONROOT["Non-root Docker user"] READONLY["Read-only container filesystem"]
-              RESLIM["Resource limits (CPU/Memory)"] end L1 --> L2 --> L3 --> L4 L4 -.-> L5 style L1
-              fill:#161b22,stroke:#58a6ff,color:#e6edf3 style L2
-              fill:#161b22,stroke:#d29922,color:#e6edf3 style L3
-              fill:#161b22,stroke:#bc8cff,color:#e6edf3 style L4
-              fill:#161b22,stroke:#3fb950,color:#e6edf3 style L5
-              fill:#161b22,stroke:#f85149,color:#e6edf3
+graph TB
+  subgraph L1["Layer 1: Transport"]
+    HELMET["Helmet - Security Headers<br />X-Frame-Options, CSP, HSTS"]
+    CORS["CORS - Origin Whitelist"]
+    TLS["TLS Termination (via LB)"]
+  end
+  subgraph L2["Layer 2: Input"]
+    RL["Rate Limiter - Per-IP Window"]
+    JSON["JSON Body Limit - 10kb"]
+    ZOD["Zod Schema Validation"]
+  end
+  subgraph L3["Layer 3: Authentication"]
+    JWT["JWT Verification - HS256"]
+    ROT["Token Rotation on Refresh"]
+    REV["Token Revocation Blacklist"]
+    LOCK["Account Lockout - 5 attempts / 15min"]
+  end
+  subgraph L4["Layer 4: Data"]
+    BCRYPT["bcrypt - 12 salt rounds"]
+    PWPOL["Password Policy - 8+ chars, letter+digit"]
+    NOPII["No PII in tokens beyond email"]
+  end
+  subgraph L5["Layer 5: Runtime"]
+    NONROOT["Non-root Docker user"]
+    READONLY["Read-only container filesystem"]
+    RESLIM["Resource limits (CPU/Memory)"]
+  end
+  L1 --> L2
+  L2 --> L3
+  L3 --> L4
+  L4 -.-> L5
+  style L1 fill:#161b22,stroke:#58a6ff,color:#e6edf3
+  style L2 fill:#161b22,stroke:#d29922,color:#e6edf3
+  style L3 fill:#161b22,stroke:#bc8cff,color:#e6edf3
+  style L4 fill:#161b22,stroke:#3fb950,color:#e6edf3
+  style L5 fill:#161b22,stroke:#f85149,color:#e6edf3
             </div>
           </div>
 
@@ -945,17 +1135,26 @@ curl http://localhost:5001/auth/me \
 
           <div class="mermaid-wrapper">
             <div class="mermaid-title">Password Validation &amp; Hashing Flow</div>
+            <!-- prettier-ignore -->
             <div class="mermaid">
-              flowchart TD INPUT["Password Input"] --> LEN{"Length >= 8?"} LEN -->|No| WEAK["throw
-              WEAK_PASSWORD"] LEN -->|Yes| LETTER{"Has letter [a-zA-Z]?"} LETTER -->|No| WEAK LETTER
-              -->|Yes| DIGIT{"Has digit [0-9]?"} DIGIT -->|No| WEAK DIGIT -->|Yes|
-              HASH["bcrypt.hash(password, 12)"] HASH --> STORE["Store passwordHash in User record"]
-              subgraph Verification["Login Verification"] INPUT2["Password Attempt"] -->
-              VERIFY["bcrypt.compare(attempt, hash)"] VERIFY --> MATCH{"Match?"} MATCH -->|Yes|
-              SUCCESS["Authentication Success"] MATCH -->|No| FAIL["Increment attempt counter"] end
-              style WEAK fill:#f85149,stroke:#f85149,color:#fff style SUCCESS
-              fill:#238636,stroke:#238636,color:#fff style FAIL
-              fill:#d29922,stroke:#d29922,color:#fff
+flowchart TD
+  INPUT["Password Input"] --> LEN{"Length >= 8?"}
+  LEN -->|No| WEAK["throw WEAK_PASSWORD"]
+  LEN -->|Yes| LETTER{"Has letter [a-zA-Z]?"}
+  LETTER -->|No| WEAK
+  LETTER -->|Yes| DIGIT{"Has digit [0-9]?"}
+  DIGIT -->|No| WEAK
+  DIGIT -->|Yes| HASH["bcrypt.hash(password, 12)"]
+  HASH --> STORE["Store passwordHash in User record"]
+  subgraph Verification["Login Verification"]
+    INPUT2["Password Attempt"] --> VERIFY["bcrypt.compare(attempt, hash)"]
+    VERIFY --> MATCH{"Match?"}
+    MATCH -->|Yes| SUCCESS["Authentication Success"]
+    MATCH -->|No| FAIL["Increment attempt counter"]
+  end
+  style WEAK fill:#f85149,stroke:#f85149,color:#fff
+  style SUCCESS fill:#238636,stroke:#238636,color:#fff
+  style FAIL fill:#d29922,stroke:#d29922,color:#fff
             </div>
           </div>
 
@@ -975,21 +1174,44 @@ curl http://localhost:5001/auth/me \
 
           <div class="mermaid-wrapper">
             <div class="mermaid-title">Cloud Deployment Architecture</div>
+            <!-- prettier-ignore -->
             <div class="mermaid">
-              graph TB subgraph Internet Users["Users / Clients"] end subgraph Cloud["Cloud Provider
-              (AWS / Azure)"] LB["Load Balancer<br />ALB / App Gateway<br />TLS termination, WAF"]
-              subgraph K8s["Kubernetes Cluster (ECS / AKS)"] Ingress["Ingress Controller<br />nginx
-              / AGIC"] subgraph Pods["jwt-module Pods"] P1["Pod 1<br />:5001"] P2["Pod 2<br />:5001"]
-              P3["Pod 3<br />:5001"] end HPA["HPA<br />Auto-scale 2-20"] SVC["ClusterIP Service"]
-              end Registry["Container Registry<br />ECR / ACR"] Secrets["Secrets Manager<br />SSM /
-              Key Vault"] Logs["Log Aggregation<br />CloudWatch / Log Analytics"] Alerts["Monitoring
-              &amp; Alerts<br />CloudWatch / Azure Monitor"] end Users --> LB LB --> Ingress Ingress
-              --> SVC SVC --> P1 SVC --> P2 SVC --> P3 HPA -.-> Pods Registry -.->|pull image| Pods
-              Secrets -.->|inject env| Pods Pods -.->|logs| Logs Logs -.->|trigger| Alerts style
-              Internet fill:#161b22,stroke:#58a6ff,color:#e6edf3 style Cloud
-              fill:#0d1117,stroke:#30363d,color:#e6edf3 style K8s
-              fill:#161b22,stroke:#bc8cff,color:#e6edf3 style Pods
-              fill:#21262d,stroke:#3fb950,color:#e6edf3
+graph TB
+  subgraph Internet["Users / Clients"]
+    U["Users / Clients"]
+  end
+  subgraph Cloud["Cloud Provider (AWS / Azure)"]
+    LB["Load Balancer<br />ALB / App Gateway<br />TLS termination, WAF"]
+    subgraph K8s["Kubernetes Cluster (ECS / AKS)"]
+      Ingress["Ingress Controller<br />nginx / AGIC"]
+      subgraph Pods["jwt-module Pods"]
+        P1["Pod 1<br />:5001"]
+        P2["Pod 2<br />:5001"]
+        P3["Pod 3<br />:5001"]
+      end
+      HPA["HPA<br />Auto-scale 2-20"]
+      SVC["ClusterIP Service"]
+    end
+    Registry["Container Registry<br />ECR / ACR"]
+    Secrets["Secrets Manager<br />SSM / Key Vault"]
+    Logs["Log Aggregation<br />CloudWatch / Log Analytics"]
+    Alerts["Monitoring &amp; Alerts<br />CloudWatch / Azure Monitor"]
+  end
+  U --> LB
+  LB --> Ingress
+  Ingress --> SVC
+  SVC --> P1
+  SVC --> P2
+  SVC --> P3
+  HPA -.-> Pods
+  Registry -.->|pull image| Pods
+  Secrets -.->|inject env| Pods
+  Pods -.->|logs| Logs
+  Logs -.->|trigger| Alerts
+  style Internet fill:#161b22,stroke:#58a6ff,color:#e6edf3
+  style Cloud fill:#0d1117,stroke:#30363d,color:#e6edf3
+  style K8s fill:#161b22,stroke:#bc8cff,color:#e6edf3
+  style Pods fill:#21262d,stroke:#3fb950,color:#e6edf3
             </div>
           </div>
 
@@ -1190,22 +1412,45 @@ npx jest --config jest.config.ts src/tests/auth-service.test.ts</code></pre>
 
           <div class="mermaid-wrapper">
             <div class="mermaid-title">Project Module Dependencies</div>
+            <!-- prettier-ignore -->
             <div class="mermaid">
-              graph LR server["server.ts<br />(entry point)"] app["api/app.ts"]
-              router["api/auth-router.ts"] mw["api/middleware.ts"] rl["api/rate-limiter.ts"]
-              val["api/validation.ts"] as["auth/auth-service.ts"] token["auth/token.ts"]
-              pw["auth/password.ts"] err["auth/errors.ts"] types["auth/types.ts"] server --> app
-              server --> as app --> router app --> mw app --> types router --> err router --> mw
-              router --> rl router --> val mw --> token as --> err as --> pw as --> token as -->
-              types token --> err token --> types pw --> err style server
-              fill:#1f6feb,stroke:#58a6ff,color:#fff style app
-              fill:#21262d,stroke:#58a6ff,color:#e6edf3 style router
-              fill:#21262d,stroke:#58a6ff,color:#e6edf3 style as
-              fill:#21262d,stroke:#bc8cff,color:#e6edf3 style token
-              fill:#21262d,stroke:#bc8cff,color:#e6edf3 style pw
-              fill:#21262d,stroke:#bc8cff,color:#e6edf3 style err
-              fill:#21262d,stroke:#f85149,color:#e6edf3 style types
-              fill:#21262d,stroke:#3fb950,color:#e6edf3
+graph LR
+  server["server.ts<br />(entry point)"]
+  app["api/app.ts"]
+  router["api/auth-router.ts"]
+  mw["api/middleware.ts"]
+  rl["api/rate-limiter.ts"]
+  val["api/validation.ts"]
+  as["auth/auth-service.ts"]
+  token["auth/token.ts"]
+  pw["auth/password.ts"]
+  err["auth/errors.ts"]
+  types["auth/types.ts"]
+  server --> app
+  server --> as
+  app --> router
+  app --> mw
+  app --> types
+  router --> err
+  router --> mw
+  router --> rl
+  router --> val
+  mw --> token
+  as --> err
+  as --> pw
+  as --> token
+  as --> types
+  token --> err
+  token --> types
+  pw --> err
+  style server fill:#1f6feb,stroke:#58a6ff,color:#fff
+  style app fill:#21262d,stroke:#58a6ff,color:#e6edf3
+  style router fill:#21262d,stroke:#58a6ff,color:#e6edf3
+  style as fill:#21262d,stroke:#bc8cff,color:#e6edf3
+  style token fill:#21262d,stroke:#bc8cff,color:#e6edf3
+  style pw fill:#21262d,stroke:#bc8cff,color:#e6edf3
+  style err fill:#21262d,stroke:#f85149,color:#e6edf3
+  style types fill:#21262d,stroke:#3fb950,color:#e6edf3
             </div>
           </div>
         </section>

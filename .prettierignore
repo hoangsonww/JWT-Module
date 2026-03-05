@@ -4,3 +4,5 @@ build
 coverage
 *.md
 k8s/helm/templates/
+*.yml
+*.yaml
