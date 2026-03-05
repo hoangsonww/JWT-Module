@@ -357,6 +357,14 @@ stateDiagram-v2
 
 ---
 
+## Demo UI
+
+<p align="center">
+    <img src="public/ui.png" width="100%" />
+</p>
+
+---
+
 ## Development
 
 ### Commands
