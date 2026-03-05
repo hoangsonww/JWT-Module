@@ -1,0 +1,1279 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JWT Module — Documentation Wiki</title>
+    <meta
+      name="description"
+      content="Comprehensive documentation for the JWT Authentication Module — Express + TypeScript enterprise-grade auth system"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="wiki/styles.css" />
+  </head>
+  <body>
+    <!-- ============ HEADER ============ -->
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="header-brand">
+          <div class="logo-icon">J</div>
+          <span>JWT Module</span>
+        </div>
+        <nav class="header-nav">
+          <a href="#quickstart">Quick Start</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#api-reference">API</a>
+          <a href="#security">Security</a>
+          <a href="#deployment">Deployment</a>
+          <a href="https://github.com/hoangsonww/JWT-Module" target="_blank" rel="noopener"
+            >GitHub</a
+          >
+        </nav>
+        <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+      </div>
+    </header>
+
+    <!-- ============ SIDEBAR ============ -->
+    <div class="sidebar-overlay"></div>
+    <aside class="sidebar">
+      <div class="sidebar-search">
+        <input type="text" id="sidebar-search" placeholder="Search docs..." />
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Getting Started</div>
+        <a class="sidebar-link" href="#hero">Overview</a>
+        <a class="sidebar-link" href="#quickstart">Quick Start</a>
+        <a class="sidebar-link" href="#architecture">Architecture</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Core Concepts</div>
+        <a class="sidebar-link" href="#auth-flows">Authentication Flows</a>
+        <a class="sidebar-link" href="#token-management">Token Management</a>
+        <a class="sidebar-link" href="#error-handling">Error Handling</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">API</div>
+        <a class="sidebar-link" href="#api-reference">API Reference</a>
+        <a class="sidebar-link" href="#rate-limiting">Rate Limiting</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Security</div>
+        <a class="sidebar-link" href="#security">Security Features</a>
+        <a class="sidebar-link" href="#password-security">Password Security</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Operations</div>
+        <a class="sidebar-link" href="#deployment">Deployment</a>
+        <a class="sidebar-link" href="#configuration">Configuration</a>
+        <a class="sidebar-link" href="#testing">Testing</a>
+        <a class="sidebar-link" href="#modules">Module Graph</a>
+        <a class="sidebar-link" href="#contributing">Contributing</a>
+      </div>
+    </aside>
+
+    <!-- ============ MAIN CONTENT ============ -->
+    <div class="page-wrapper">
+      <main class="main-content">
+        <!-- ======== HERO ======== -->
+        <section class="hero" id="hero">
+          <h1>JWT Authentication Module</h1>
+          <p class="tagline">
+            Enterprise-grade JWT authentication built with Express &amp; TypeScript. Zero-database,
+            fully stateless, production-ready.
+          </p>
+          <div class="hero-stats">
+            <div class="stat">
+              <span class="stat-value">9</span><span class="stat-label">API Endpoints</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">102</span><span class="stat-label">Tests Passing</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">10</span><span class="stat-label">Error Codes</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">0</span><span class="stat-label">Dependencies on DB</span>
+            </div>
+          </div>
+          <div class="hero-badges">
+            <span class="badge badge-blue">TypeScript 5.5</span>
+            <span class="badge badge-green">Express 4</span>
+            <span class="badge badge-purple">Node 20</span>
+            <span class="badge badge-orange">JWT HS256</span>
+          </div>
+        </section>
+
+        <!-- ======== QUICK START ======== -->
+        <section class="wiki-section" id="quickstart">
+          <h2><span class="section-icon">&#9889;</span> Quick Start</h2>
+          <h3>1. Clone &amp; Install</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span>bash</span><button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>git clone https://github.com/hoangsonww/jwt-module.git
+cd jwt-module
+npm install</code></pre>
+          </div>
+
+          <h3>2. Configure Environment</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span>.env</span><button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>PORT=5001
+JWT_ACCESS_SECRET=your-access-secret-min-32-chars
+JWT_REFRESH_SECRET=your-refresh-secret-min-32-chars
+CORS_ORIGIN=http://localhost:3000
+NODE_ENV=development</code></pre>
+          </div>
+
+          <h3>3. Run</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span>bash</span><button class="copy-btn">Copy</button>
+            </div>
+            <pre><code># Development
+PORT=5001 npx ts-node src/server.ts
+
+# Production (build first)
+npm run build
+NODE_ENV=production node dist/server.js
+
+# Docker
+docker compose up --build</code></pre>
+          </div>
+
+          <h3>4. Test It</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span>bash</span><button class="copy-btn">Copy</button>
+            </div>
+            <pre><code># Register
+curl -X POST http://localhost:5001/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"Secret123"}'
+
+# Login
+curl -X POST http://localhost:5001/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"Secret123"}'
+
+# Access protected route
+curl http://localhost:5001/auth/me \
+  -H "Authorization: Bearer &lt;access_token&gt;"</code></pre>
+          </div>
+        </section>
+
+        <!-- ======== ARCHITECTURE ======== -->
+        <section class="wiki-section" id="architecture">
+          <h2><span class="section-icon">&#127959;</span> Architecture Overview</h2>
+          <p>
+            The module follows a clean layered architecture with strict separation between the HTTP
+            API layer and the authentication business logic.
+          </p>
+
+          <div class="mermaid-wrapper">
+            <div class="mermaid-title">System Architecture</div>
+            <div class="mermaid">
+              graph TB subgraph Client["Client Layer"] Browser["Browser / Mobile App"] CLI["CLI /
+              curl"] end subgraph API["API Layer (src/api/)"] Express["Express App<br />helmet,
+              cors, json"] RL["Rate Limiter<br />Per-IP sliding window"] Val["Zod Validation<br />Schema-based
+              input check"] MW["Auth Middleware<br />Bearer token verification"] Router["Auth
+              Router<br />9 endpoints"] end subgraph Auth["Auth Layer (src/auth/)"] AS["Auth
+              Service<br />register, login, refresh<br />logout, password, email"] TM["Token
+              Manager<br />JWT sign/verify<br />Revocation blacklist"] PW["Password Utils<br />bcrypt
+              hash/verify<br />Strength validation"] ERR["Error System<br />AuthError + codes"] end
+              subgraph Storage["In-Memory Storage"] Users["Users Map&lt;id, User&gt;"]
+              Tokens["Revoked Tokens Map"] Sessions["User Tokens Map"] Attempts["Login Attempts
+              Map"] end Browser --> Express CLI --> Express Express --> RL RL --> Val Val --> MW MW
+              --> Router Router --> AS AS --> TM AS --> PW AS --> ERR AS --> Users TM --> Tokens AS
+              --> Sessions AS --> Attempts style Client fill:#161b22,stroke:#30363d,color:#e6edf3
+              style API fill:#161b22,stroke:#1f6feb,color:#e6edf3 style Auth
+              fill:#161b22,stroke:#bc8cff,color:#e6edf3 style Storage
+              fill:#161b22,stroke:#3fb950,color:#e6edf3
+            </div>
+          </div>
+
+          <h3>Key Design Decisions</h3>
+          <ul>
+            <li>
+              <strong>No database:</strong> All state is in-memory Maps. This keeps the module
+              self-contained and eliminates infrastructure dependencies.
+            </li>
+            <li>
+              <strong>Interface-driven:</strong> The API layer consumes auth via the
+              <code>AuthService</code> interface, making the auth implementation swappable.
+            </li>
+            <li>
+              <strong>Layer separation:</strong> Business logic in <code>src/auth/</code> never
+              imports Express. HTTP concerns stay in <code>src/api/</code>.
+            </li>
+            <li>
+              <strong>Error-first:</strong> Typed <code>AuthError</code> codes propagate from auth
+              layer to HTTP via <code>ERROR_STATUS_MAP</code>.
+            </li>
+          </ul>
+        </section>
+
+        <!-- ======== AUTH FLOWS ======== -->
+        <section class="wiki-section" id="auth-flows">
+          <h2><span class="section-icon">&#128256;</span> Authentication Flows</h2>
+
+          <h3>Complete Auth Lifecycle</h3>
+          <div class="mermaid-wrapper">
+            <div class="mermaid-title">
+              Authentication Sequence — Register, Login, Use, Refresh, Logout
+            </div>
+            <div class="mermaid">
+              sequenceDiagram participant C as Client participant API as API Layer participant AS as
+              Auth Service participant TM as Token Manager participant PW as Password Utils
+              participant DB as In-Memory Store Note over C,DB: Registration Flow C->>API: POST
+              /auth/register {email, password} API->>API: Zod validation + rate limit API->>AS:
+              register(input) AS->>PW: validatePasswordStrength(password) PW-->>AS: pass / throw
+              WEAK_PASSWORD AS->>PW: hashPassword(password) PW-->>AS: bcrypt hash (12 rounds)
+              AS->>DB: store User{id, email, hash, createdAt} AS->>TM: generateTokens({userId,
+              email}) TM-->>AS: {accessToken, refreshToken} AS-->>API: AuthTokens API-->>C: 201
+              {tokens: {accessToken, refreshToken}} Note over C,DB: Login Flow C->>API: POST
+              /auth/login {email, password} API->>API: Zod validation + rate limit API->>AS:
+              login(input) AS->>DB: findByEmail(email) AS->>AS: check lockout status AS->>PW:
+              verifyPassword(input, hash) PW-->>AS: true/false AS->>TM: generateTokens({userId,
+              email}) TM-->>AS: {accessToken, refreshToken} AS-->>API: AuthTokens API-->>C: 200
+              {tokens} Note over C,DB: Authenticated Request C->>API: GET /auth/me [Authorization:
+              Bearer token] API->>TM: verifyAccessToken(token) TM-->>API: {userId, email} API->>AS:
+              getUserById(userId) AS->>DB: users.get(id) AS-->>API: User API-->>C: 200 {id, email,
+              createdAt} Note over C,DB: Token Refresh C->>API: POST /auth/refresh {refreshToken}
+              API->>AS: refreshTokens(refreshToken) AS->>TM: verifyRefreshToken(token) TM-->>AS:
+              payload AS->>TM: revokeRefreshToken(oldToken) AS->>TM: generateTokens(payload)
+              TM-->>AS: new {accessToken, refreshToken} AS-->>API: AuthTokens API-->>C: 200 {tokens}
+              Note over C,DB: Logout C->>API: POST /auth/logout {refreshToken} API->>AS:
+              logout(refreshToken) AS->>TM: revokeRefreshToken(token) AS-->>API: void API-->>C: 200
+              "Logged out successfully"
+            </div>
+          </div>
+
+          <h3>Account Lockout Flow</h3>
+          <div class="mermaid-wrapper">
+            <div class="mermaid-title">Login Attempt Tracking &amp; Account Lockout</div>
+            <div class="mermaid">
+              flowchart TD A["POST /auth/login"] --> B{"Account locked?"} B -->|"Yes (within 15
+              min)"| C["423 ACCOUNT_LOCKED"] B -->|No| D["Find user by email"] D --> E{"User
+              exists?"} E -->|No| F["401 INVALID_CREDENTIALS"] E -->|Yes| G["Verify password with
+              bcrypt"] G --> H{"Password valid?"} H -->|No| I["Increment attempt counter"] I -->
+              J{"attempts >= 5?"} J -->|Yes| K["Lock account for 15 minutes"] J -->|No| F K --> F H
+              -->|Yes| L["Clear attempt counter"] L --> M["Generate token pair"] M --> N["200 +
+              AuthTokens"] style C fill:#f85149,stroke:#f85149,color:#fff style F
+              fill:#f85149,stroke:#f85149,color:#fff style N fill:#238636,stroke:#238636,color:#fff
+              style K fill:#d29922,stroke:#d29922,color:#fff
+            </div>
+          </div>
+        </section>
+
+        <!-- ======== TOKEN MANAGEMENT ======== -->
+        <section class="wiki-section" id="token-management">
+          <h2><span class="section-icon">&#128273;</span> Token Management</h2>
+
+          <h3>Token Lifecycle States</h3>
+          <div class="mermaid-wrapper">
+            <div class="mermaid-title">JWT Token State Machine</div>
+            <div class="mermaid">
+              stateDiagram-v2 [*] --> Generated: generateTokens() Generated --> Active: Token issued
+              to client state Active { AccessToken: Access Token (15 min) RefreshToken: Refresh
+              Token (7 days) } Active --> Expired: TTL exceeded Active --> Revoked: logout / refresh
+              rotation Revoked --> Pruned: pruneExpiredTokens() Expired --> [*]: Discarded Pruned
+              --> [*]: Removed from blacklist note right of Active Access: used in Authorization
+              header Refresh: used to get new token pair end note note right of Revoked Stored in
+              revokedTokens Map with TTL = 7 days end note
+            </div>
+          </div>
+
+          <h3>Token Rotation</h3>
+          <div class="mermaid-wrapper">
+            <div class="mermaid-title">Refresh Token Rotation Sequence</div>
+            <div class="mermaid">
+              sequenceDiagram participant C as Client participant S as Server participant BL as
+              Revocation Blacklist Note over C: Access token expired C->>S: POST /auth/refresh
+              {refreshToken: RT1} S->>BL: Is RT1 revoked? BL-->>S: No S->>S: Verify RT1 signature +
+              expiry S->>BL: Revoke RT1 (add to blacklist) S->>S: Generate new AT2 + RT2 S-->>C:
+              {accessToken: AT2, refreshToken: RT2} Note over C: Client must use RT2 next time Note
+              over C: RT1 is now permanently invalid C->>S: POST /auth/refresh {refreshToken: RT1}
+              S->>BL: Is RT1 revoked? BL-->>S: Yes - REVOKED S-->>C: 401 INVALID_TOKEN
+            </div>
+          </div>
+
+          <h3>Token Configuration</h3>
+          <table class="wiki-table">
+            <thead>
+              <tr>
+                <th>Token Type</th>
+                <th>Algorithm</th>
+                <th>Expiry</th>
+                <th>Payload</th>
+                <th>Storage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Access Token</td>
+                <td>HS256</td>
+                <td>15 minutes</td>
+                <td><code>userId</code>, <code>email</code></td>
+                <td>Client only</td>
+              </tr>
+              <tr>
+                <td>Refresh Token</td>
+                <td>HS256</td>
+                <td>7 days</td>
+                <td><code>userId</code>, <code>email</code></td>
+                <td>Client + server tracking</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- ======== ERROR HANDLING ======== -->
+        <section class="wiki-section" id="error-handling">
+          <h2><span class="section-icon">&#9888;</span> Error Handling</h2>
+
+          <h3>Error Architecture</h3>
+          <div class="mermaid-wrapper">
+            <div class="mermaid-title">Error Propagation — AuthError to HTTP Response</div>
+            <div class="mermaid">
+              flowchart LR subgraph AuthLayer["Auth Layer"] AE["throw new AuthError(code, message)"]
+              end subgraph Router["Auth Router"] Catch["catch (err)"] Check{"err instanceof
+              AuthError?"} Map["ERROR_STATUS_MAP[err.code]"] Generic["500 INTERNAL_ERROR"] end
+              subgraph Response["HTTP Response"] R1["{ error: { code, message } }"] end AE --> Catch
+              Catch --> Check Check -->|Yes| Map Check -->|No| Generic Map --> R1 Generic --> R1
+              style AuthLayer fill:#161b22,stroke:#bc8cff,color:#e6edf3 style Router
+              fill:#161b22,stroke:#1f6feb,color:#e6edf3 style Response
+              fill:#161b22,stroke:#3fb950,color:#e6edf3
+            </div>
+          </div>
+
+          <h3>Error Code Reference</h3>
+          <table class="wiki-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>HTTP Status</th>
+                <th>Description</th>
+                <th>Trigger</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>DUPLICATE_EMAIL</code></td>
+                <td>409</td>
+                <td>Email already registered</td>
+                <td>register, updateEmail</td>
+              </tr>
+              <tr>
+                <td><code>INVALID_CREDENTIALS</code></td>
+                <td>401</td>
+                <td>Wrong email or password</td>
+                <td>login, changePassword, updateEmail, deleteAccount</td>
+              </tr>
+              <tr>
+                <td><code>INVALID_TOKEN</code></td>
+                <td>401</td>
+                <td>Token is malformed or revoked</td>
+                <td>refresh, any authenticated route</td>
+              </tr>
+              <tr>
+                <td><code>TOKEN_EXPIRED</code></td>
+                <td>401</td>
+                <td>Token TTL exceeded</td>
+                <td>refresh, any authenticated route</td>
+              </tr>
+              <tr>
+                <td><code>MISSING_SECRET</code></td>
+                <td>500</td>
+                <td>JWT secret env var not set</td>
+                <td>Any token operation</td>
+              </tr>
+              <tr>
+                <td><code>INVALID_EMAIL</code></td>
+                <td>400</td>
+                <td>Email format validation failed</td>
+                <td>register, updateEmail</td>
+              </tr>
+              <tr>
+                <td><code>WEAK_PASSWORD</code></td>
+                <td>400</td>
+                <td>Password doesn't meet policy</td>
+                <td>register, changePassword</td>
+              </tr>
+              <tr>
+                <td><code>USER_NOT_FOUND</code></td>
+                <td>404</td>
+                <td>No user with given ID</td>
+                <td>getUserById, changePassword, etc.</td>
+              </tr>
+              <tr>
+                <td><code>MISSING_TOKEN</code></td>
+                <td>401</td>
+                <td>No Authorization header</td>
+                <td>Any authenticated route</td>
+              </tr>
+              <tr>
+                <td><code>ACCOUNT_LOCKED</code></td>
+                <td>423</td>
+                <td>Too many failed login attempts</td>
+                <td>login (after 5 failures)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Response Shape</h3>
+          <p>All error responses follow a consistent structure:</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span>json</span><button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>{
+  "error": {
+    "code": "INVALID_CREDENTIALS",
+    "message": "Invalid email or password"
+  }
+}</code></pre>
+          </div>
+        </section>
+
+        <!-- ======== API REFERENCE ======== -->
+        <section class="wiki-section" id="api-reference">
+          <h2><span class="section-icon">&#128218;</span> API Reference</h2>
+          <p>
+            All endpoints accept and return JSON. The base URL is
+            <code>http://localhost:5001</code>.
+          </p>
+
+          <!-- POST /auth/register -->
+          <div class="endpoint-card">
+            <div class="endpoint-header">
+              <span class="method-badge method-POST">POST</span>
+              <span class="endpoint-path">/auth/register</span>
+              <span class="auth-badge auth-none">Public</span>
+              <span class="auth-badge rate-limited">Rate Limited</span>
+              <span class="endpoint-toggle">&#9660;</span>
+            </div>
+            <div class="endpoint-body">
+              <p>Register a new user account. Returns access and refresh tokens.</p>
+              <div class="endpoint-detail-label">Request Body</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{
+  "email": "user@example.com",
+  "password": "Secret123"
+}</code></pre>
+              </div>
+              <div class="endpoint-detail-label">Success Response — 201</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{
+  "tokens": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
+  }
+}</code></pre>
+              </div>
+              <div class="endpoint-detail-label">Error Responses</div>
+              <table class="wiki-table">
+                <thead>
+                  <tr>
+                    <th>Status</th>
+                    <th>Code</th>
+                    <th>When</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>400</td>
+                    <td><code>WEAK_PASSWORD</code></td>
+                    <td>Password &lt; 8 chars or missing letter/digit</td>
+                  </tr>
+                  <tr>
+                    <td>400</td>
+                    <td><code>INVALID_EMAIL</code></td>
+                    <td>Email format invalid</td>
+                  </tr>
+                  <tr>
+                    <td>409</td>
+                    <td><code>DUPLICATE_EMAIL</code></td>
+                    <td>Email already registered</td>
+                  </tr>
+                  <tr>
+                    <td>429</td>
+                    <td>Rate limited</td>
+                    <td>Too many requests from IP</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- POST /auth/login -->
+          <div class="endpoint-card">
+            <div class="endpoint-header">
+              <span class="method-badge method-POST">POST</span>
+              <span class="endpoint-path">/auth/login</span>
+              <span class="auth-badge auth-none">Public</span>
+              <span class="auth-badge rate-limited">Rate Limited</span>
+              <span class="endpoint-toggle">&#9660;</span>
+            </div>
+            <div class="endpoint-body">
+              <p>
+                Authenticate with email and password. Returns a token pair. Account locks after 5
+                failed attempts for 15 minutes.
+              </p>
+              <div class="endpoint-detail-label">Request Body</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{
+  "email": "user@example.com",
+  "password": "Secret123"
+}</code></pre>
+              </div>
+              <div class="endpoint-detail-label">Success Response — 200</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{
+  "tokens": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
+  }
+}</code></pre>
+              </div>
+              <div class="endpoint-detail-label">Error Responses</div>
+              <table class="wiki-table">
+                <thead>
+                  <tr>
+                    <th>Status</th>
+                    <th>Code</th>
+                    <th>When</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>401</td>
+                    <td><code>INVALID_CREDENTIALS</code></td>
+                    <td>Wrong email or password</td>
+                  </tr>
+                  <tr>
+                    <td>423</td>
+                    <td><code>ACCOUNT_LOCKED</code></td>
+                    <td>5+ failed attempts in window</td>
+                  </tr>
+                  <tr>
+                    <td>429</td>
+                    <td>Rate limited</td>
+                    <td>Too many requests from IP</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- POST /auth/refresh -->
+          <div class="endpoint-card">
+            <div class="endpoint-header">
+              <span class="method-badge method-POST">POST</span>
+              <span class="endpoint-path">/auth/refresh</span>
+              <span class="auth-badge auth-none">Public</span>
+              <span class="auth-badge rate-limited">Rate Limited</span>
+              <span class="endpoint-toggle">&#9660;</span>
+            </div>
+            <div class="endpoint-body">
+              <p>
+                Exchange a valid refresh token for a new token pair. The old refresh token is
+                revoked (rotation).
+              </p>
+              <div class="endpoint-detail-label">Request Body</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{ "refreshToken": "eyJhbGciOiJIUzI1NiIs..." }</code></pre>
+              </div>
+              <div class="endpoint-detail-label">Success Response — 200</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{
+  "tokens": {
+    "accessToken": "new-access-token...",
+    "refreshToken": "new-refresh-token..."
+  }
+}</code></pre>
+              </div>
+              <div class="endpoint-detail-label">Error Responses</div>
+              <table class="wiki-table">
+                <thead>
+                  <tr>
+                    <th>Status</th>
+                    <th>Code</th>
+                    <th>When</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>401</td>
+                    <td><code>INVALID_TOKEN</code></td>
+                    <td>Token revoked or malformed</td>
+                  </tr>
+                  <tr>
+                    <td>401</td>
+                    <td><code>TOKEN_EXPIRED</code></td>
+                    <td>Refresh token TTL exceeded</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- GET /auth/me -->
+          <div class="endpoint-card">
+            <div class="endpoint-header">
+              <span class="method-badge method-GET">GET</span>
+              <span class="endpoint-path">/auth/me</span>
+              <span class="auth-badge auth-required">Auth Required</span>
+              <span class="endpoint-toggle">&#9660;</span>
+            </div>
+            <div class="endpoint-body">
+              <p>Get the current authenticated user's profile.</p>
+              <div class="endpoint-detail-label">Headers</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>http</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>Authorization: Bearer &lt;access_token&gt;</code></pre>
+              </div>
+              <div class="endpoint-detail-label">Success Response — 200</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{
+  "id": "clx9abc123def456",
+  "email": "user@example.com",
+  "createdAt": "2024-06-15T10:30:00.000Z"
+}</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- PATCH /auth/me -->
+          <div class="endpoint-card">
+            <div class="endpoint-header">
+              <span class="method-badge method-PATCH">PATCH</span>
+              <span class="endpoint-path">/auth/me</span>
+              <span class="auth-badge auth-required">Auth Required</span>
+              <span class="endpoint-toggle">&#9660;</span>
+            </div>
+            <div class="endpoint-body">
+              <p>Update the authenticated user's email. Requires password confirmation.</p>
+              <div class="endpoint-detail-label">Request Body</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{
+  "newEmail": "newemail@example.com",
+  "password": "Secret123"
+}</code></pre>
+              </div>
+              <div class="endpoint-detail-label">Success Response — 200</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{ "message": "Email updated successfully" }</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- DELETE /auth/me -->
+          <div class="endpoint-card">
+            <div class="endpoint-header">
+              <span class="method-badge method-DELETE">DELETE</span>
+              <span class="endpoint-path">/auth/me</span>
+              <span class="auth-badge auth-required">Auth Required</span>
+              <span class="endpoint-toggle">&#9660;</span>
+            </div>
+            <div class="endpoint-body">
+              <p>
+                Permanently delete the authenticated user's account. Revokes all sessions. Requires
+                password confirmation.
+              </p>
+              <div class="endpoint-detail-label">Request Body</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{ "password": "Secret123" }</code></pre>
+              </div>
+              <div class="endpoint-detail-label">Success Response — 200</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{ "message": "Account deleted successfully" }</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- POST /auth/logout -->
+          <div class="endpoint-card">
+            <div class="endpoint-header">
+              <span class="method-badge method-POST">POST</span>
+              <span class="endpoint-path">/auth/logout</span>
+              <span class="auth-badge auth-none">Public</span>
+              <span class="endpoint-toggle">&#9660;</span>
+            </div>
+            <div class="endpoint-body">
+              <p>Revoke a specific refresh token, ending that session.</p>
+              <div class="endpoint-detail-label">Request Body</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{ "refreshToken": "eyJhbGciOiJIUzI1NiIs..." }</code></pre>
+              </div>
+              <div class="endpoint-detail-label">Success Response — 200</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{ "message": "Logged out successfully" }</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- POST /auth/logout-all -->
+          <div class="endpoint-card">
+            <div class="endpoint-header">
+              <span class="method-badge method-POST">POST</span>
+              <span class="endpoint-path">/auth/logout-all</span>
+              <span class="auth-badge auth-required">Auth Required</span>
+              <span class="endpoint-toggle">&#9660;</span>
+            </div>
+            <div class="endpoint-body">
+              <p>
+                Revoke all refresh tokens for the authenticated user, ending all sessions
+                everywhere.
+              </p>
+              <div class="endpoint-detail-label">Success Response — 200</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{ "message": "All sessions revoked successfully" }</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- POST /auth/change-password -->
+          <div class="endpoint-card">
+            <div class="endpoint-header">
+              <span class="method-badge method-POST">POST</span>
+              <span class="endpoint-path">/auth/change-password</span>
+              <span class="auth-badge auth-required">Auth Required</span>
+              <span class="auth-badge rate-limited">Rate Limited</span>
+              <span class="endpoint-toggle">&#9660;</span>
+            </div>
+            <div class="endpoint-body">
+              <p>
+                Change the authenticated user's password. All existing sessions are revoked after
+                change.
+              </p>
+              <div class="endpoint-detail-label">Request Body</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{
+  "currentPassword": "OldSecret123",
+  "newPassword": "NewSecret456"
+}</code></pre>
+              </div>
+              <div class="endpoint-detail-label">Success Response — 200</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{ "message": "Password changed successfully" }</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- GET /health -->
+          <div class="endpoint-card">
+            <div class="endpoint-header">
+              <span class="method-badge method-GET">GET</span>
+              <span class="endpoint-path">/health</span>
+              <span class="auth-badge auth-none">Public</span>
+              <span class="endpoint-toggle">&#9660;</span>
+            </div>
+            <div class="endpoint-body">
+              <p>Health check endpoint for load balancers and orchestrators.</p>
+              <div class="endpoint-detail-label">Success Response — 200</div>
+              <div class="code-block">
+                <div class="code-block-header">
+                  <span>json</span><button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>{ "status": "ok" }</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======== RATE LIMITING ======== -->
+        <section class="wiki-section" id="rate-limiting">
+          <h2><span class="section-icon">&#9201;</span> Rate Limiting</h2>
+          <p>The API uses a per-IP sliding window rate limiter to prevent brute-force and abuse.</p>
+
+          <div class="mermaid-wrapper">
+            <div class="mermaid-title">Request Processing Pipeline</div>
+            <div class="mermaid">
+              flowchart LR REQ["Incoming Request"] --> HELMET["Helmet<br />Security Headers"] HELMET
+              --> CORS["CORS<br />Origin Check"] CORS --> LOG["Request Logger"] LOG --> JSON["JSON
+              Parser<br />10kb limit"] JSON --> ROUTE{"Route Match?"} ROUTE -->|"Rate limited
+              route"| RL["Rate Limiter<br />Per-IP window"] RL --> RLCHECK{"Under limit?"} RLCHECK
+              -->|No| R429["429 Too Many Requests"] RLCHECK -->|Yes| ZOD["Zod Validation"] ROUTE
+              -->|"Auth required"| MW["Auth Middleware<br />Verify Bearer token"] MW -->
+              MWCHECK{"Valid token?"} MWCHECK -->|No| R401["401 Unauthorized"] MWCHECK -->|Yes| ZOD
+              ROUTE -->|"Health check"| HEALTH["200 OK"] ZOD --> ZODCHECK{"Valid body?"} ZODCHECK
+              -->|No| R400["400 Validation Error"] ZODCHECK -->|Yes| HANDLER["Route Handler"]
+              HANDLER --> RES["JSON Response"] style R429 fill:#d29922,stroke:#d29922,color:#fff
+              style R401 fill:#f85149,stroke:#f85149,color:#fff style R400
+              fill:#f85149,stroke:#f85149,color:#fff style HEALTH
+              fill:#238636,stroke:#238636,color:#fff style RES
+              fill:#238636,stroke:#238636,color:#fff
+            </div>
+          </div>
+
+          <h3>Rate Limited Endpoints</h3>
+          <table class="wiki-table">
+            <thead>
+              <tr>
+                <th>Endpoint</th>
+                <th>Protected</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>POST /auth/register</code></td>
+                <td>Yes</td>
+                <td>Prevents mass account creation</td>
+              </tr>
+              <tr>
+                <td><code>POST /auth/login</code></td>
+                <td>Yes</td>
+                <td>Works with account lockout</td>
+              </tr>
+              <tr>
+                <td><code>POST /auth/refresh</code></td>
+                <td>Yes</td>
+                <td>Prevents token farming</td>
+              </tr>
+              <tr>
+                <td><code>POST /auth/change-password</code></td>
+                <td>Yes</td>
+                <td>Prevents brute-force on current password</td>
+              </tr>
+              <tr>
+                <td>All other endpoints</td>
+                <td>No</td>
+                <td>Protected by auth middleware instead</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- ======== SECURITY ======== -->
+        <section class="wiki-section" id="security">
+          <h2><span class="section-icon">&#128737;</span> Security Features</h2>
+
+          <div class="mermaid-wrapper">
+            <div class="mermaid-title">Security Defense Layers</div>
+            <div class="mermaid">
+              graph TB subgraph L1["Layer 1: Transport"] HELMET["Helmet — Security Headers<br />X-Frame-Options,
+              CSP, HSTS"] CORS["CORS — Origin Whitelist"] TLS["TLS Termination (via LB)"] end
+              subgraph L2["Layer 2: Input"] RL["Rate Limiter — Per-IP Window"] JSON["JSON Body Limit
+              — 10kb"] ZOD["Zod Schema Validation"] end subgraph L3["Layer 3: Authentication"]
+              JWT["JWT Verification — HS256"] ROT["Token Rotation on Refresh"] REV["Token Revocation
+              Blacklist"] LOCK["Account Lockout — 5 attempts / 15min"] end subgraph L4["Layer 4:
+              Data"] BCRYPT["bcrypt — 12 salt rounds"] PWPOL["Password Policy — 8+ chars,
+              letter+digit"] NOPII["No PII in tokens beyond email"] end subgraph L5["Layer 5:
+              Runtime"] NONROOT["Non-root Docker user"] READONLY["Read-only container filesystem"]
+              RESLIM["Resource limits (CPU/Memory)"] end L1 --> L2 --> L3 --> L4 L4 -.-> L5 style L1
+              fill:#161b22,stroke:#58a6ff,color:#e6edf3 style L2
+              fill:#161b22,stroke:#d29922,color:#e6edf3 style L3
+              fill:#161b22,stroke:#bc8cff,color:#e6edf3 style L4
+              fill:#161b22,stroke:#3fb950,color:#e6edf3 style L5
+              fill:#161b22,stroke:#f85149,color:#e6edf3
+            </div>
+          </div>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">Production Note</div>
+            <p>
+              This module uses in-memory storage. All user data is lost on restart. For production
+              with persistence, implement the <code>AuthService</code> interface with a real
+              database backend.
+            </p>
+          </div>
+        </section>
+
+        <!-- ======== PASSWORD SECURITY ======== -->
+        <section class="wiki-section" id="password-security">
+          <h2><span class="section-icon">&#128272;</span> Password Security</h2>
+
+          <div class="mermaid-wrapper">
+            <div class="mermaid-title">Password Validation &amp; Hashing Flow</div>
+            <div class="mermaid">
+              flowchart TD INPUT["Password Input"] --> LEN{"Length >= 8?"} LEN -->|No| WEAK["throw
+              WEAK_PASSWORD"] LEN -->|Yes| LETTER{"Has letter [a-zA-Z]?"} LETTER -->|No| WEAK LETTER
+              -->|Yes| DIGIT{"Has digit [0-9]?"} DIGIT -->|No| WEAK DIGIT -->|Yes|
+              HASH["bcrypt.hash(password, 12)"] HASH --> STORE["Store passwordHash in User record"]
+              subgraph Verification["Login Verification"] INPUT2["Password Attempt"] -->
+              VERIFY["bcrypt.compare(attempt, hash)"] VERIFY --> MATCH{"Match?"} MATCH -->|Yes|
+              SUCCESS["Authentication Success"] MATCH -->|No| FAIL["Increment attempt counter"] end
+              style WEAK fill:#f85149,stroke:#f85149,color:#fff style SUCCESS
+              fill:#238636,stroke:#238636,color:#fff style FAIL
+              fill:#d29922,stroke:#d29922,color:#fff
+            </div>
+          </div>
+
+          <h3>Password Policy</h3>
+          <ul>
+            <li>Minimum 8 characters</li>
+            <li>At least one letter (a-z or A-Z)</li>
+            <li>At least one digit (0-9)</li>
+            <li>Hashed with bcrypt using 12 salt rounds (~250ms per hash)</li>
+            <li>Plaintext password never stored or logged</li>
+          </ul>
+        </section>
+
+        <!-- ======== DEPLOYMENT ======== -->
+        <section class="wiki-section" id="deployment">
+          <h2><span class="section-icon">&#128640;</span> Deployment</h2>
+
+          <div class="mermaid-wrapper">
+            <div class="mermaid-title">Cloud Deployment Architecture</div>
+            <div class="mermaid">
+              graph TB subgraph Internet Users["Users / Clients"] end subgraph Cloud["Cloud Provider
+              (AWS / Azure)"] LB["Load Balancer<br />ALB / App Gateway<br />TLS termination, WAF"]
+              subgraph K8s["Kubernetes Cluster (ECS / AKS)"] Ingress["Ingress Controller<br />nginx
+              / AGIC"] subgraph Pods["jwt-module Pods"] P1["Pod 1<br />:5001"] P2["Pod 2<br />:5001"]
+              P3["Pod 3<br />:5001"] end HPA["HPA<br />Auto-scale 2-20"] SVC["ClusterIP Service"]
+              end Registry["Container Registry<br />ECR / ACR"] Secrets["Secrets Manager<br />SSM /
+              Key Vault"] Logs["Log Aggregation<br />CloudWatch / Log Analytics"] Alerts["Monitoring
+              &amp; Alerts<br />CloudWatch / Azure Monitor"] end Users --> LB LB --> Ingress Ingress
+              --> SVC SVC --> P1 SVC --> P2 SVC --> P3 HPA -.-> Pods Registry -.->|pull image| Pods
+              Secrets -.->|inject env| Pods Pods -.->|logs| Logs Logs -.->|trigger| Alerts style
+              Internet fill:#161b22,stroke:#58a6ff,color:#e6edf3 style Cloud
+              fill:#0d1117,stroke:#30363d,color:#e6edf3 style K8s
+              fill:#161b22,stroke:#bc8cff,color:#e6edf3 style Pods
+              fill:#21262d,stroke:#3fb950,color:#e6edf3
+            </div>
+          </div>
+
+          <h3>Docker</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span>bash</span><button class="copy-btn">Copy</button>
+            </div>
+            <pre><code># Build and run with Docker Compose
+export JWT_ACCESS_SECRET="your-secret-here"
+export JWT_REFRESH_SECRET="your-secret-here"
+docker compose up --build -d
+
+# Check health
+curl http://localhost:5001/health</code></pre>
+          </div>
+
+          <h3>Kubernetes (Kustomize)</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span>bash</span><button class="copy-btn">Copy</button>
+            </div>
+            <pre><code># Dev
+kubectl apply -k k8s/overlays/dev
+
+# Staging
+kubectl apply -k k8s/overlays/staging
+
+# Production
+kubectl apply -k k8s/overlays/prod</code></pre>
+          </div>
+
+          <h3>Kubernetes (Helm)</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span>bash</span><button class="copy-btn">Copy</button>
+            </div>
+            <pre><code># Install
+helm install jwt-module k8s/helm -f k8s/helm/values-prod.yaml
+
+# Upgrade
+helm upgrade jwt-module k8s/helm -f k8s/helm/values-prod.yaml</code></pre>
+          </div>
+
+          <h3>AWS (Terraform + ECS Fargate)</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span>bash</span><button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>cd aws/terraform
+terraform init
+terraform plan -var-file=environments/prod.tfvars
+terraform apply -var-file=environments/prod.tfvars</code></pre>
+          </div>
+
+          <h3>Azure (Terraform + AKS)</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span>bash</span><button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>cd azure/terraform
+terraform init
+terraform plan -var-file=environments/prod.tfvars
+terraform apply -var-file=environments/prod.tfvars</code></pre>
+          </div>
+        </section>
+
+        <!-- ======== CONFIGURATION ======== -->
+        <section class="wiki-section" id="configuration">
+          <h2><span class="section-icon">&#9881;</span> Configuration Reference</h2>
+
+          <table class="wiki-table">
+            <thead>
+              <tr>
+                <th>Variable</th>
+                <th>Required</th>
+                <th>Default</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>PORT</code></td>
+                <td>No</td>
+                <td><code>3000</code></td>
+                <td>Server listen port</td>
+              </tr>
+              <tr>
+                <td><code>JWT_ACCESS_SECRET</code></td>
+                <td>Yes*</td>
+                <td>Dev fallback</td>
+                <td>Secret for signing access tokens (HS256)</td>
+              </tr>
+              <tr>
+                <td><code>JWT_REFRESH_SECRET</code></td>
+                <td>Yes*</td>
+                <td>Dev fallback</td>
+                <td>Secret for signing refresh tokens (HS256)</td>
+              </tr>
+              <tr>
+                <td><code>CORS_ORIGIN</code></td>
+                <td>No</td>
+                <td><code>*</code></td>
+                <td>Allowed CORS origin</td>
+              </tr>
+              <tr>
+                <td><code>NODE_ENV</code></td>
+                <td>No</td>
+                <td><code>development</code></td>
+                <td>Runtime environment</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout-danger">
+            <div class="callout-title">Security Warning</div>
+            <p>
+              In production, always set <code>JWT_ACCESS_SECRET</code> and
+              <code>JWT_REFRESH_SECRET</code> to strong, unique random strings (minimum 32
+              characters). The development fallback secrets in <code>server.ts</code> should never
+              be used in production.
+            </p>
+          </div>
+        </section>
+
+        <!-- ======== TESTING ======== -->
+        <section class="wiki-section" id="testing">
+          <h2><span class="section-icon">&#129514;</span> Testing</h2>
+
+          <div class="code-block">
+            <div class="code-block-header">
+              <span>bash</span><button class="copy-btn">Copy</button>
+            </div>
+            <pre><code># Run all tests
+npm test
+
+# Run with coverage report
+npm run test:coverage
+
+# Run specific test file
+npx jest --config jest.config.ts src/tests/auth-service.test.ts</code></pre>
+          </div>
+
+          <h3>Test Suite Overview</h3>
+          <table class="wiki-table">
+            <thead>
+              <tr>
+                <th>File</th>
+                <th>Coverage</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>auth-service.test.ts</code></td>
+                <td>Auth Service</td>
+                <td>
+                  Register, login, refresh, logout, password change, email update, delete, lockout
+                </td>
+              </tr>
+              <tr>
+                <td><code>token.test.ts</code></td>
+                <td>Token Utils</td>
+                <td>Generate, verify, revoke, prune expired tokens</td>
+              </tr>
+              <tr>
+                <td><code>password.test.ts</code></td>
+                <td>Password Utils</td>
+                <td>Hash, verify, strength validation edge cases</td>
+              </tr>
+              <tr>
+                <td><code>middleware.test.ts</code></td>
+                <td>Middleware</td>
+                <td>Auth middleware, missing/invalid/expired tokens</td>
+              </tr>
+              <tr>
+                <td><code>api.test.ts</code></td>
+                <td>Integration</td>
+                <td>Full HTTP endpoint tests with supertest</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Test Isolation</div>
+            <p>
+              Every test file calls <code>clearRevokedTokens()</code>,
+              <code>clearLoginAttempts()</code>, <code>clearUserTokens()</code>, and
+              <code>clearRateLimitWindows()</code> in <code>afterEach</code> to prevent cross-test
+              contamination.
+            </p>
+          </div>
+        </section>
+
+        <!-- ======== MODULE GRAPH ======== -->
+        <section class="wiki-section" id="modules">
+          <h2><span class="section-icon">&#128200;</span> Module Dependency Graph</h2>
+
+          <div class="mermaid-wrapper">
+            <div class="mermaid-title">Project Module Dependencies</div>
+            <div class="mermaid">
+              graph LR server["server.ts<br />(entry point)"] app["api/app.ts"]
+              router["api/auth-router.ts"] mw["api/middleware.ts"] rl["api/rate-limiter.ts"]
+              val["api/validation.ts"] as["auth/auth-service.ts"] token["auth/token.ts"]
+              pw["auth/password.ts"] err["auth/errors.ts"] types["auth/types.ts"] server --> app
+              server --> as app --> router app --> mw app --> types router --> err router --> mw
+              router --> rl router --> val mw --> token as --> err as --> pw as --> token as -->
+              types token --> err token --> types pw --> err style server
+              fill:#1f6feb,stroke:#58a6ff,color:#fff style app
+              fill:#21262d,stroke:#58a6ff,color:#e6edf3 style router
+              fill:#21262d,stroke:#58a6ff,color:#e6edf3 style as
+              fill:#21262d,stroke:#bc8cff,color:#e6edf3 style token
+              fill:#21262d,stroke:#bc8cff,color:#e6edf3 style pw
+              fill:#21262d,stroke:#bc8cff,color:#e6edf3 style err
+              fill:#21262d,stroke:#f85149,color:#e6edf3 style types
+              fill:#21262d,stroke:#3fb950,color:#e6edf3
+            </div>
+          </div>
+        </section>
+
+        <!-- ======== CONTRIBUTING ======== -->
+        <section class="wiki-section" id="contributing">
+          <h2><span class="section-icon">&#129309;</span> Contributing</h2>
+
+          <h3>Development Setup</h3>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span>bash</span><button class="copy-btn">Copy</button>
+            </div>
+            <pre><code>git clone https://github.com/hoangsonww/jwt-module.git
+cd jwt-module
+npm install
+npm test                   # Verify everything passes
+PORT=5001 npx ts-node src/server.ts   # Start dev server</code></pre>
+          </div>
+
+          <h3>Project Conventions</h3>
+          <ul>
+            <li>All auth business logic goes in <code>src/auth/</code> — never in the router</li>
+            <li>
+              New error codes: add to <code>AuthErrorCode</code> union in <code>errors.ts</code> AND
+              to <code>ERROR_STATUS_MAP</code> in <code>auth-router.ts</code>
+            </li>
+            <li>New input schemas go in <code>src/api/validation.ts</code> using Zod</li>
+            <li>Tests must clean up state in <code>afterEach</code> (see Testing section)</li>
+            <li>No database or external service dependencies without an interface abstraction</li>
+            <li>TypeScript strict mode — no <code>any</code>, no <code>@ts-ignore</code></li>
+          </ul>
+
+          <h3>Adding a New Endpoint</h3>
+          <ol>
+            <li>
+              Add the method to the <code>AuthService</code> interface in
+              <code>src/api/app.ts</code>
+            </li>
+            <li>Implement the logic in <code>src/auth/auth-service.ts</code></li>
+            <li>Add Zod validation schema in <code>src/api/validation.ts</code></li>
+            <li>Add the route in <code>src/api/auth-router.ts</code></li>
+            <li>
+              Add any new error codes to both <code>errors.ts</code> and
+              <code>ERROR_STATUS_MAP</code>
+            </li>
+            <li>Write tests covering happy path, edge cases, and error cases</li>
+          </ol>
+        </section>
+      </main>
+    </div>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="site-footer">
+      <p>JWT Authentication Module &mdash; Built with Express &amp; TypeScript</p>
+      <p style="margin-top: 8px">
+        <a href="https://sonnguyenhoang.com" target="_blank" rel="noopener">Son Nguyen</a>
+        &nbsp;&middot;&nbsp;
+        <a href="https://github.com/hoangsonww" target="_blank" rel="noopener">GitHub</a>
+        &nbsp;&middot;&nbsp;
+        <a href="https://github.com/hoangsonww/JWT-Module" target="_blank" rel="noopener"
+          >Repository</a
+        >
+      </p>
+    </footer>
+
+    <!-- ============ SCRIPTS ============ -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <script src="wiki/scripts.js"></script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "properties": {
+    "displayName": "Deny Public IP on AKS Nodes",
+    "description": "Prevents creation of public IP addresses on AKS node VMs",
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "parameters": {},
+    "policyRule": {
+      "if": {
+        "allOf": [
+          { "field": "type", "equals": "Microsoft.Network/publicIPAddresses" },
+          {
+            "not": {
+              "field": "tags['purpose']",
+              "in": ["load-balancer", "application-gateway"]
+            }
+          }
+        ]
+      },
+      "then": {
+        "effect": "deny"
+      }
+    }
+  }
+}

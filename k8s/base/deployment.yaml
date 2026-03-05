@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jwt-module
+  namespace: jwt-module
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: jwt-module
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: jwt-module
+    spec:
+      serviceAccountName: jwt-module
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: jwt-module
+
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/name
+                      operator: In
+                      values:
+                        - jwt-module
+                topologyKey: kubernetes.io/hostname
+
+      containers:
+        - name: jwt-module
+          image: jwt-module:latest
+          ports:
+            - containerPort: 5001
+              protocol: TCP
+
+          envFrom:
+            - configMapRef:
+                name: jwt-module-config
+            - secretRef:
+                name: jwt-module-secrets
+
+          resources:
+            requests:
+              cpu: 128m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 5001
+            failureThreshold: 30
+            periodSeconds: 2
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5001
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3

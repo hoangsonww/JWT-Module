@@ -1,0 +1,21 @@
+{
+  "properties": {
+    "displayName": "Require Tags on Resources",
+    "description": "Enforces required tags (Project, Environment, ManagedBy) on all resources",
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "parameters": {},
+    "policyRule": {
+      "if": {
+        "anyOf": [
+          { "field": "tags['Project']", "exists": "false" },
+          { "field": "tags['Environment']", "exists": "false" },
+          { "field": "tags['ManagedBy']", "exists": "false" }
+        ]
+      },
+      "then": {
+        "effect": "deny"
+      }
+    }
+  }
+}

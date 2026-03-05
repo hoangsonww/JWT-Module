@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jwt-module-config
+  namespace: jwt-module
+data:
+  NODE_ENV: "staging"
+  PORT: "5001"
+  CORS_ORIGIN: "https://staging.example.com"

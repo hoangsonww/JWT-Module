@@ -45,7 +45,10 @@ export function createAuthRouter(authService: AuthService): Router {
 
   router.post("/auth/register", rateLimiter, async (req: Request, res: Response) => {
     const parsed = RegisterSchema.safeParse(req.body);
-    if (!parsed.success) { zodError(res, parsed.error); return; }
+    if (!parsed.success) {
+      zodError(res, parsed.error);
+      return;
+    }
 
     try {
       const tokens = await authService.register({
@@ -60,7 +63,10 @@ export function createAuthRouter(authService: AuthService): Router {
 
   router.post("/auth/login", rateLimiter, async (req: Request, res: Response) => {
     const parsed = LoginSchema.safeParse(req.body);
-    if (!parsed.success) { zodError(res, parsed.error); return; }
+    if (!parsed.success) {
+      zodError(res, parsed.error);
+      return;
+    }
 
     try {
       const tokens = await authService.login({
@@ -75,7 +81,10 @@ export function createAuthRouter(authService: AuthService): Router {
 
   router.post("/auth/refresh", rateLimiter, (req: Request, res: Response) => {
     const parsed = RefreshSchema.safeParse(req.body);
-    if (!parsed.success) { zodError(res, parsed.error); return; }
+    if (!parsed.success) {
+      zodError(res, parsed.error);
+      return;
+    }
 
     try {
       const tokens = authService.refreshTokens(parsed.data.refreshToken);
@@ -113,7 +122,10 @@ export function createAuthRouter(authService: AuthService): Router {
 
   router.post("/auth/logout", (req: Request, res: Response) => {
     const parsed = LogoutSchema.safeParse(req.body);
-    if (!parsed.success) { zodError(res, parsed.error); return; }
+    if (!parsed.success) {
+      zodError(res, parsed.error);
+      return;
+    }
 
     try {
       authService.logout(parsed.data.refreshToken);
@@ -123,25 +135,41 @@ export function createAuthRouter(authService: AuthService): Router {
     }
   });
 
-  router.post("/auth/change-password", authenticateToken, rateLimiter, async (req: Request, res: Response) => {
-    if (!req.user) {
-      res.status(401).json({ error: { code: "MISSING_TOKEN", message: "Authorization token is required" } });
-      return;
-    }
-    const parsed = ChangePasswordSchema.safeParse(req.body);
-    if (!parsed.success) { zodError(res, parsed.error); return; }
+  router.post(
+    "/auth/change-password",
+    authenticateToken,
+    rateLimiter,
+    async (req: Request, res: Response) => {
+      if (!req.user) {
+        res
+          .status(401)
+          .json({ error: { code: "MISSING_TOKEN", message: "Authorization token is required" } });
+        return;
+      }
+      const parsed = ChangePasswordSchema.safeParse(req.body);
+      if (!parsed.success) {
+        zodError(res, parsed.error);
+        return;
+      }
 
-    try {
-      await authService.changePassword(req.user.userId, parsed.data.currentPassword, parsed.data.newPassword);
-      res.status(200).json({ message: "Password changed successfully" });
-    } catch (err) {
-      handleAuthError(err, res);
-    }
-  });
+      try {
+        await authService.changePassword(
+          req.user.userId,
+          parsed.data.currentPassword,
+          parsed.data.newPassword,
+        );
+        res.status(200).json({ message: "Password changed successfully" });
+      } catch (err) {
+        handleAuthError(err, res);
+      }
+    },
+  );
 
   router.post("/auth/logout-all", authenticateToken, (req: Request, res: Response) => {
     if (!req.user) {
-      res.status(401).json({ error: { code: "MISSING_TOKEN", message: "Authorization token is required" } });
+      res
+        .status(401)
+        .json({ error: { code: "MISSING_TOKEN", message: "Authorization token is required" } });
       return;
     }
     try {
@@ -154,11 +182,16 @@ export function createAuthRouter(authService: AuthService): Router {
 
   router.patch("/auth/me", authenticateToken, async (req: Request, res: Response) => {
     if (!req.user) {
-      res.status(401).json({ error: { code: "MISSING_TOKEN", message: "Authorization token is required" } });
+      res
+        .status(401)
+        .json({ error: { code: "MISSING_TOKEN", message: "Authorization token is required" } });
       return;
     }
     const parsed = UpdateEmailSchema.safeParse(req.body);
-    if (!parsed.success) { zodError(res, parsed.error); return; }
+    if (!parsed.success) {
+      zodError(res, parsed.error);
+      return;
+    }
 
     try {
       await authService.updateEmail(req.user.userId, parsed.data.newEmail, parsed.data.password);
@@ -170,11 +203,16 @@ export function createAuthRouter(authService: AuthService): Router {
 
   router.delete("/auth/me", authenticateToken, async (req: Request, res: Response) => {
     if (!req.user) {
-      res.status(401).json({ error: { code: "MISSING_TOKEN", message: "Authorization token is required" } });
+      res
+        .status(401)
+        .json({ error: { code: "MISSING_TOKEN", message: "Authorization token is required" } });
       return;
     }
     const parsed = DeleteAccountSchema.safeParse(req.body);
-    if (!parsed.success) { zodError(res, parsed.error); return; }
+    if (!parsed.success) {
+      zodError(res, parsed.error);
+      return;
+    }
 
     try {
       await authService.deleteAccount(req.user.userId, parsed.data.password);

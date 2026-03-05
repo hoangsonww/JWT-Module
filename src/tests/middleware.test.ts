@@ -129,7 +129,10 @@ describe("authenticateToken middleware", () => {
       expect(res.status).toHaveBeenCalledWith(401);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          error: expect.objectContaining({ code: "INVALID_TOKEN", message: "Invalid access token" }),
+          error: expect.objectContaining({
+            code: "INVALID_TOKEN",
+            message: "Invalid access token",
+          }),
         }),
       );
     } finally {

@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: jwt-module
+
+resources:
+  - ../../base
+  - priorityclass.yaml
+
+patches:
+  - path: patches/deployment-patch.yaml
+  - path: patches/hpa-patch.yaml
+  - path: configmap.yaml
+
+commonLabels:
+  environment: prod

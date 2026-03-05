@@ -9,11 +9,7 @@ const config: Config = {
   moduleNameMapper: {
     "^@paralleldrive/cuid2$": "<rootDir>/src/tests/__mocks__/cuid2.ts",
   },
-  collectCoverageFrom: [
-    "src/auth/**/*.ts",
-    "src/api/**/*.ts",
-    "!src/**/*.d.ts",
-  ],
+  collectCoverageFrom: ["src/auth/**/*.ts", "src/api/**/*.ts", "!src/**/*.d.ts"],
 };
 
 export default config;

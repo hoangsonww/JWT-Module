@@ -1,0 +1,57 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "jwt-module.fullname" . }}-deny-all
+  labels:
+    {{- include "jwt-module.labels" . | nindent 4 }}
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "jwt-module.fullname" . }}-allow-ingress
+  labels:
+    {{- include "jwt-module.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "jwt-module.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: {{ .Values.healthCheck.port }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "jwt-module.fullname" . }}-allow-dns
+  labels:
+    {{- include "jwt-module.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "jwt-module.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+{{- end }}

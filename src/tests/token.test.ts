@@ -62,11 +62,9 @@ describe("token utilities", () => {
 
     it("should throw AuthError with TOKEN_EXPIRED on expired token", () => {
       const secret = TEST_ACCESS_SECRET;
-      const expired = jwt.sign(
-        { userId: "user-123", email: "test@example.com" },
-        secret,
-        { expiresIn: "0s" },
-      );
+      const expired = jwt.sign({ userId: "user-123", email: "test@example.com" }, secret, {
+        expiresIn: "0s",
+      });
       expect(() => verifyAccessToken(expired)).toThrow(AuthError);
       try {
         verifyAccessToken(expired);
@@ -105,11 +103,9 @@ describe("token utilities", () => {
 
     it("should throw AuthError with TOKEN_EXPIRED on expired token", () => {
       const secret = TEST_REFRESH_SECRET;
-      const expired = jwt.sign(
-        { userId: "user-123", email: "test@example.com" },
-        secret,
-        { expiresIn: "0s" },
-      );
+      const expired = jwt.sign({ userId: "user-123", email: "test@example.com" }, secret, {
+        expiresIn: "0s",
+      });
       expect(() => verifyRefreshToken(expired)).toThrow(AuthError);
       try {
         verifyRefreshToken(expired);

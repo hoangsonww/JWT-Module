@@ -1,0 +1,22 @@
+replicaCount: 3
+
+ingress:
+  enabled: true
+  tls:
+    enabled: true
+
+config:
+  NODE_ENV: "production"
+  CORS_ORIGIN: "https://example.com"
+
+resources:
+  requests:
+    cpu: 256m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+
+autoscaling:
+  minReplicas: 3
+  maxReplicas: 20

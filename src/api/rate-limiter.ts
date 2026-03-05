@@ -11,9 +11,8 @@ const MAX_REQUESTS = 20;
 const windows = new Map<string, WindowEntry>();
 
 export function rateLimiter(req: Request, res: Response, next: NextFunction): void {
-  const key = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim()
-    ?? req.ip
-    ?? "unknown";
+  const key =
+    (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ?? req.ip ?? "unknown";
   const now = Date.now();
   const entry = windows.get(key);
 

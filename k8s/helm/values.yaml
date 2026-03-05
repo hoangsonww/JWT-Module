@@ -1,0 +1,93 @@
+replicaCount: 2
+
+image:
+  repository: jwt-module
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automountServiceAccountToken: false
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 5001
+
+ingress:
+  enabled: false
+  className: nginx
+  host: jwt-module.example.com
+  tls:
+    enabled: false
+    secretName: jwt-module-tls
+  annotations:
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10k"
+
+config:
+  NODE_ENV: "production"
+  PORT: "5001"
+  CORS_ORIGIN: "*"
+
+secrets:
+  JWT_ACCESS_SECRET: "REPLACE-WITH-REAL-SECRET"
+  JWT_REFRESH_SECRET: "REPLACE-WITH-REAL-SECRET"
+
+resources:
+  requests:
+    cpu: 128m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+pdb:
+  enabled: true
+  minAvailable: 1
+
+networkPolicy:
+  enabled: true
+
+healthCheck:
+  path: /health
+  port: 5001
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+nodeSelector: {}
+tolerations: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          topologyKey: kubernetes.io/hostname
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - jwt-module

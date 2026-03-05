@@ -1,0 +1,23 @@
+JWT Module has been deployed!
+
+1. Get the application URL:
+{{- if .Values.ingress.enabled }}
+  https://{{ .Values.ingress.host }}
+{{- else }}
+  kubectl port-forward svc/{{ include "jwt-module.fullname" . }} 5001:{{ .Values.service.port }} -n {{ .Release.Namespace }}
+  Then visit: http://localhost:5001
+{{- end }}
+
+2. Check health:
+  curl http://localhost:5001/health
+
+3. View logs:
+  kubectl logs -f deployment/{{ include "jwt-module.fullname" . }} -n {{ .Release.Namespace }}
+
+4. API Endpoints:
+  POST /auth/register    — Register a new account
+  POST /auth/login       — Login
+  POST /auth/refresh     — Refresh tokens
+  POST /auth/logout      — Logout
+  GET  /auth/me          — Get profile (auth required)
+  GET  /health           — Health check

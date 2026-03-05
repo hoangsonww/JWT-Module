@@ -1,0 +1,9 @@
+replicaCount: 2
+
+config:
+  NODE_ENV: "staging"
+  CORS_ORIGIN: "https://staging.example.com"
+
+autoscaling:
+  minReplicas: 2
+  maxReplicas: 6

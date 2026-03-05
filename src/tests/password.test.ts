@@ -87,7 +87,9 @@ describe("password utilities", () => {
     });
 
     it("should accept passwords with emoji and special unicode", () => {
-      expect(() => validatePasswordStrength("hello\ud83d\ude00\ud83d\ude00\ud83d\ude001")).not.toThrow();
+      expect(() =>
+        validatePasswordStrength("hello\ud83d\ude00\ud83d\ude00\ud83d\ude001"),
+      ).not.toThrow();
     });
   });
 

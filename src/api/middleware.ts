@@ -11,11 +11,7 @@ declare global {
   }
 }
 
-export function authenticateToken(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
+export function authenticateToken(req: Request, res: Response, next: NextFunction): void {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
