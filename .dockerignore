@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+.git
+.vs
+.env
+*.log
+src/tests
+jest.config.ts
+.claude
+*.md
+!README.md
