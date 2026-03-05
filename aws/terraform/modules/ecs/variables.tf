@@ -1,0 +1,15 @@
+variable "name_prefix" { type = string }
+variable "region" { type = string }
+variable "vpc_id" { type = string }
+variable "private_subnet_ids" { type = list(string) }
+variable "alb_target_group_arn" { type = string }
+variable "alb_security_group_id" { type = string }
+variable "container_port" { type = number }
+variable "task_cpu" { type = number }
+variable "task_memory" { type = number }
+variable "desired_count" { type = number }
+variable "min_capacity" { type = number }
+variable "max_capacity" { type = number }
+variable "log_group_name" { type = string }
+variable "environment" { type = string }
+variable "project_name" { type = string }

@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jwt-module
+spec:
+  replicas: 3
+  template:
+    spec:
+      priorityClassName: jwt-module-high
+      containers:
+        - name: jwt-module
+          resources:
+            requests:
+              cpu: 256m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 512Mi

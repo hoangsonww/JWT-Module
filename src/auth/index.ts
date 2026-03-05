@@ -24,10 +24,4 @@ export {
   register,
   updateEmail,
 } from "./auth-service";
-export type {
-  AuthTokens,
-  LoginInput,
-  RegisterInput,
-  TokenPayload,
-  User,
-} from "./types";
+export type { AuthTokens, LoginInput, RegisterInput, TokenPayload, User } from "./types";

@@ -1,484 +1,616 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JWT Module Tester</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JWT Module Tester</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-    /* ── theme tokens ─────────────────────────────────────── */
-    :root {
-      --accent:       #6c63ff;
-      --accent-hover: #5a52e0;
-      --radius: 8px;
-    }
+      /* ── theme tokens ─────────────────────────────────────── */
+      :root {
+        --accent: #6c63ff;
+        --accent-hover: #5a52e0;
+        --radius: 8px;
+      }
 
-    [data-theme="dark"] {
-      --bg:       #0f1117;
-      --surface:  #1a1d27;
-      --surface2: #22263a;
-      --border:   #2e3248;
-      --text:     #e2e8f0;
-      --muted:    #64748b;
-      --handle:   #2e3248;
-      --handle-hover: #6c63ff;
-    }
+      [data-theme="dark"] {
+        --bg: #0f1117;
+        --surface: #1a1d27;
+        --surface2: #22263a;
+        --border: #2e3248;
+        --text: #e2e8f0;
+        --muted: #64748b;
+        --handle: #2e3248;
+        --handle-hover: #6c63ff;
+      }
 
-    [data-theme="light"] {
-      --bg:       #f4f6fb;
-      --surface:  #ffffff;
-      --surface2: #eef0f7;
-      --border:   #d5d9eb;
-      --text:     #1a1d2e;
-      --muted:    #7c84a0;
-      --handle:   #d5d9eb;
-      --handle-hover: #6c63ff;
-    }
+      [data-theme="light"] {
+        --bg: #f4f6fb;
+        --surface: #ffffff;
+        --surface2: #eef0f7;
+        --border: #d5d9eb;
+        --text: #1a1d2e;
+        --muted: #7c84a0;
+        --handle: #d5d9eb;
+        --handle-hover: #6c63ff;
+      }
 
-    /* ── layout ───────────────────────────────────────────── */
-    html, body { height: 100%; overflow: hidden; }
+      /* ── layout ───────────────────────────────────────────── */
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      font-size: 14px;
-      display: flex;
-      flex-direction: column;
-    }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Segoe UI", system-ui, sans-serif;
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+      }
 
-    header {
-      flex-shrink: 0;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+      header {
+        flex-shrink: 0;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
 
-    header h1 { font-size: 15px; font-weight: 600; }
+      header h1 {
+        font-size: 15px;
+        font-weight: 600;
+      }
 
-    .badge {
-      font-size: 11px;
-      background: var(--accent);
-      color: #fff;
-      padding: 2px 8px;
-      border-radius: 99px;
-      font-weight: 500;
-    }
+      .badge {
+        font-size: 11px;
+        background: var(--accent);
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 99px;
+        font-weight: 500;
+      }
 
-    #health-indicator {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--muted);
-    }
+      #health-indicator {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--muted);
+      }
 
-    #health-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--muted);
-      transition: background .3s;
-    }
-    #health-dot.ok  { background: #22c55e; }
-    #health-dot.err { background: #ef4444; }
+      #health-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--muted);
+        transition: background 0.3s;
+      }
+      #health-dot.ok {
+        background: #22c55e;
+      }
+      #health-dot.err {
+        background: #ef4444;
+      }
 
-    #header-right {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+      #header-right {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
 
-    /* theme toggle */
-    #theme-toggle {
-      width: 34px; height: 34px;
-      border-radius: 6px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: background .15s;
-    }
-    #theme-toggle:hover { background: var(--border); }
-    #theme-toggle svg { width: 22px; height: 22px; display: block; }
+      /* theme toggle */
+      #theme-toggle {
+        width: 34px;
+        height: 34px;
+        border-radius: 6px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        color: var(--text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: background 0.15s;
+      }
+      #theme-toggle:hover {
+        background: var(--border);
+      }
+      #theme-toggle svg {
+        width: 22px;
+        height: 22px;
+        display: block;
+      }
 
-    /* ── two-panel area ───────────────────────────────────── */
-    #main {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-    }
+      /* ── two-panel area ───────────────────────────────────── */
+      #main {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
 
-    /* LEFT PANEL */
-    #panel {
-      width: 50%;
-      min-width: 220px;
-      background: var(--surface);
-      overflow-y: auto;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      flex-shrink: 0;
-    }
+      /* LEFT PANEL */
+      #panel {
+        width: 50%;
+        min-width: 220px;
+        background: var(--surface);
+        overflow-y: auto;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex-shrink: 0;
+      }
 
-    /* RESIZE HANDLE */
-    #resize-handle {
-      width: 5px;
-      flex-shrink: 0;
-      background: var(--handle);
-      cursor: col-resize;
-      transition: background .15s;
-      position: relative;
-    }
-    #resize-handle:hover,
-    #resize-handle.dragging { background: var(--handle-hover); }
+      /* RESIZE HANDLE */
+      #resize-handle {
+        width: 5px;
+        flex-shrink: 0;
+        background: var(--handle);
+        cursor: col-resize;
+        transition: background 0.15s;
+        position: relative;
+      }
+      #resize-handle:hover,
+      #resize-handle.dragging {
+        background: var(--handle-hover);
+      }
 
-    /* RIGHT PANEL */
-    #right-panel {
-      flex: 1;
-      min-width: 220px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
+      /* RIGHT PANEL */
+      #right-panel {
+        flex: 1;
+        min-width: 220px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
 
-    /* ── section cards ────────────────────────────────────── */
-    .section {
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      flex-shrink: 0;
-    }
+      /* ── section cards ────────────────────────────────────── */
+      .section {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        flex-shrink: 0;
+      }
 
-    .section-header {
-      background: var(--surface2);
-      padding: 9px 12px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      color: var(--muted);
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      user-select: none;
-    }
-    .section-header:hover { color: var(--text); }
+      .section-header {
+        background: var(--surface2);
+        padding: 9px 12px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--muted);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        user-select: none;
+      }
+      .section-header:hover {
+        color: var(--text);
+      }
 
-    .section-body {
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .section-body.collapsed { display: none; }
+      .section-body {
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .section-body.collapsed {
+        display: none;
+      }
 
-    label {
-      font-size: 12px;
-      color: var(--muted);
-      display: block;
-      margin-bottom: 3px;
-    }
-    .hint { font-size: 11px; color: var(--muted); }
+      label {
+        font-size: 12px;
+        color: var(--muted);
+        display: block;
+        margin-bottom: 3px;
+      }
+      .hint {
+        font-size: 11px;
+        color: var(--muted);
+      }
 
-    input {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      padding: 7px 10px;
-      font-size: 13px;
-      outline: none;
-      transition: border-color .15s;
-    }
-    input:focus { border-color: var(--accent); }
+      input {
+        width: 100%;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text);
+        padding: 7px 10px;
+        font-size: 13px;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      input:focus {
+        border-color: var(--accent);
+      }
 
-    button {
-      width: 100%;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      padding: 8px 12px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background .15s;
-    }
-    button:hover { background: var(--accent-hover); }
+      button {
+        width: 100%;
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      button:hover {
+        background: var(--accent-hover);
+      }
 
-    button.secondary {
-      background: var(--surface2);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    button.secondary:hover { background: var(--border); }
+      button.secondary {
+        background: var(--surface2);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+      button.secondary:hover {
+        background: var(--border);
+      }
 
-    button.danger { background: #7f1d1d; color: #fca5a5; }
-    button.danger:hover { background: #991b1b; }
+      button.danger {
+        background: #7f1d1d;
+        color: #fca5a5;
+      }
+      button.danger:hover {
+        background: #991b1b;
+      }
 
-    .chip-row { display: flex; gap: 6px; }
-    .chip-row button { flex: 1; }
+      .chip-row {
+        display: flex;
+        gap: 6px;
+      }
+      .chip-row button {
+        flex: 1;
+      }
 
-    /* ── token bar ────────────────────────────────────────── */
-    #token-bar {
-      background: var(--surface2);
-      border-bottom: 1px solid var(--border);
-      padding: 8px 14px;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-      flex-shrink: 0;
-    }
+      /* ── token bar ────────────────────────────────────────── */
+      #token-bar {
+        background: var(--surface2);
+        border-bottom: 1px solid var(--border);
+        padding: 8px 14px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+        flex-shrink: 0;
+      }
 
-    .token-chip {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 4px 10px;
-      font-size: 11px;
-    }
-    .token-chip .label { color: var(--muted); white-space: nowrap; }
-    .token-chip .val {
-      font-family: monospace;
-      max-width: 130px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      color: var(--text);
-    }
-    .token-chip .val.empty { color: var(--muted); font-style: italic; }
+      .token-chip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 11px;
+      }
+      .token-chip .label {
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .token-chip .val {
+        font-family: monospace;
+        max-width: 130px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--text);
+      }
+      .token-chip .val.empty {
+        color: var(--muted);
+        font-style: italic;
+      }
 
-    .copy-btn {
-      width: auto;
-      padding: 2px 7px;
-      font-size: 11px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      color: var(--muted);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .copy-btn:hover { color: var(--text); background: var(--border); }
+      .copy-btn {
+        width: auto;
+        padding: 2px 7px;
+        font-size: 11px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        color: var(--muted);
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .copy-btn:hover {
+        color: var(--text);
+        background: var(--border);
+      }
 
-    /* ── log area ─────────────────────────────────────────── */
-    #log {
-      flex: 1;
-      overflow-y: auto;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+      /* ── log area ─────────────────────────────────────────── */
+      #log {
+        flex: 1;
+        overflow-y: auto;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
 
-    #empty-log {
-      color: var(--muted);
-      font-size: 13px;
-      text-align: center;
-      margin-top: 60px;
-    }
+      #empty-log {
+        color: var(--muted);
+        font-size: 13px;
+        text-align: center;
+        margin-top: 60px;
+      }
 
-    .log-entry {
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      flex-shrink: 0;
-    }
+      .log-entry {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        flex-shrink: 0;
+      }
 
-    .log-entry-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      background: var(--surface2);
-      border-bottom: 1px solid var(--border);
-    }
+      .log-entry-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        background: var(--surface2);
+        border-bottom: 1px solid var(--border);
+      }
 
-    .method-badge {
-      font-weight: 700;
-      font-size: 11px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      color: #fff;
-      font-family: monospace;
-    }
+      .method-badge {
+        font-weight: 700;
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: #fff;
+        font-family: monospace;
+      }
 
-    .status-badge {
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-family: monospace;
-    }
+      .status-badge {
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-family: monospace;
+      }
 
-    .log-path { color: var(--text); font-size: 12px; font-family: monospace; }
-    .log-time { margin-left: auto; color: var(--muted); font-size: 11px; }
+      .log-path {
+        color: var(--text);
+        font-size: 12px;
+        font-family: monospace;
+      }
+      .log-time {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 11px;
+      }
 
-    .log-body {
-      padding: 10px 12px;
-      font-family: monospace;
-      font-size: 12px;
-      white-space: pre-wrap;
-      word-break: break-all;
-      color: var(--text);
-      max-height: 280px;
-      overflow-y: auto;
-      background: var(--bg);
-    }
+      .log-body {
+        padding: 10px 12px;
+        font-family: monospace;
+        font-size: 12px;
+        white-space: pre-wrap;
+        word-break: break-all;
+        color: var(--text);
+        max-height: 280px;
+        overflow-y: auto;
+        background: var(--bg);
+      }
 
-    .user-info {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px 12px;
-      font-size: 12px;
-      color: var(--muted);
-      display: none;
-    }
-    .user-info.visible { display: block; }
-  </style>
-</head>
-<body>
-
-<header>
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6c63ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <rect x="3" y="11" width="18" height="11" rx="2"/>
-    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-  </svg>
-  <h1>JWT Module Tester</h1>
-  <span class="badge">localhost:5001</span>
-  <div id="header-right">
-    <div id="health-indicator">
-      <div id="health-dot"></div>
-      <span id="health-text">checking…</span>
-    </div>
-    <button id="theme-toggle" title="Toggle light/dark mode" aria-label="Toggle theme">
-      <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;display:block;flex-shrink:0">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      .user-info {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 10px 12px;
+        font-size: 12px;
+        color: var(--muted);
+        display: none;
+      }
+      .user-info.visible {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#6c63ff"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <rect x="3" y="11" width="18" height="11" rx="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
       </svg>
-      <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;display:none;flex-shrink:0">
-        <circle cx="12" cy="12" r="5"/>
-        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-      </svg>
-    </button>
-  </div>
-</header>
-
-<div id="main">
-
-  <!-- LEFT PANEL -->
-  <div id="panel">
-
-    <div class="section">
-      <div class="section-header">Register <span>▾</span></div>
-      <div class="section-body">
-        <div>
-          <label for="reg-email">Email</label>
-          <input id="reg-email" type="email" placeholder="you@example.com" autocomplete="email" />
+      <h1>JWT Module Tester</h1>
+      <span class="badge">localhost:5001</span>
+      <div id="header-right">
+        <div id="health-indicator">
+          <div id="health-dot"></div>
+          <span id="health-text">checking…</span>
         </div>
-        <div>
-          <label for="reg-pass">Password <span class="hint">(≥8 chars, letter + digit)</span></label>
-          <input id="reg-pass" type="password" placeholder="••••••••" autocomplete="new-password" />
+        <button id="theme-toggle" title="Toggle light/dark mode" aria-label="Toggle theme">
+          <svg
+            id="icon-moon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            style="width: 17px; height: 17px; display: block; flex-shrink: 0"
+          >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+          <svg
+            id="icon-sun"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            style="width: 17px; height: 17px; display: none; flex-shrink: 0"
+          >
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div id="main">
+      <!-- LEFT PANEL -->
+      <div id="panel">
+        <div class="section">
+          <div class="section-header">Register <span>▾</span></div>
+          <div class="section-body">
+            <div>
+              <label for="reg-email">Email</label>
+              <input
+                id="reg-email"
+                type="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+              />
+            </div>
+            <div>
+              <label for="reg-pass"
+                >Password <span class="hint">(≥8 chars, letter + digit)</span></label
+              >
+              <input
+                id="reg-pass"
+                type="password"
+                placeholder="••••••••"
+                autocomplete="new-password"
+              />
+            </div>
+            <button id="btn-register">Register</button>
+          </div>
         </div>
-        <button id="btn-register">Register</button>
+
+        <div class="section">
+          <div class="section-header">Login <span>▾</span></div>
+          <div class="section-body">
+            <div>
+              <label for="login-email">Email</label>
+              <input
+                id="login-email"
+                type="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+              />
+            </div>
+            <div>
+              <label for="login-pass">Password</label>
+              <input
+                id="login-pass"
+                type="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+              />
+            </div>
+            <button id="btn-login">Login</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">Session <span>▾</span></div>
+          <div class="section-body">
+            <div id="me-info" class="user-info"></div>
+            <div class="chip-row">
+              <button id="btn-me">GET /auth/me</button>
+              <button id="btn-refresh" class="secondary">Refresh tokens</button>
+            </div>
+            <button id="btn-logout" class="danger">Logout</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">Change Password <span>▾</span></div>
+          <div class="section-body">
+            <div>
+              <label for="cp-current">Current password</label>
+              <input
+                id="cp-current"
+                type="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+              />
+            </div>
+            <div>
+              <label for="cp-new">New password</label>
+              <input
+                id="cp-new"
+                type="password"
+                placeholder="••••••••"
+                autocomplete="new-password"
+              />
+            </div>
+            <button id="btn-change-password">Change password</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">Health <span>▾</span></div>
+          <div class="section-body">
+            <button id="btn-health" class="secondary">GET /health</button>
+          </div>
+        </div>
+      </div>
+      <!-- /#panel -->
+
+      <!-- RESIZE HANDLE -->
+      <div id="resize-handle" role="separator" aria-label="Resize panels"></div>
+
+      <!-- RIGHT PANEL -->
+      <div id="right-panel">
+        <div id="token-bar">
+          <div class="token-chip">
+            <span class="label">access</span>
+            <span class="val empty" id="access-display">none</span>
+            <button class="copy-btn" id="btn-copy-access">copy</button>
+          </div>
+          <div class="token-chip">
+            <span class="label">refresh</span>
+            <span class="val empty" id="refresh-display">none</span>
+            <button class="copy-btn" id="btn-copy-refresh">copy</button>
+          </div>
+          <button class="secondary copy-btn" id="btn-clear-log" style="margin-left: auto">
+            clear log
+          </button>
+        </div>
+        <div id="log">
+          <div id="empty-log">Make a request to see the response here.</div>
+        </div>
       </div>
     </div>
+    <!-- /#main -->
 
-    <div class="section">
-      <div class="section-header">Login <span>▾</span></div>
-      <div class="section-body">
-        <div>
-          <label for="login-email">Email</label>
-          <input id="login-email" type="email" placeholder="you@example.com" autocomplete="email" />
-        </div>
-        <div>
-          <label for="login-pass">Password</label>
-          <input id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password" />
-        </div>
-        <button id="btn-login">Login</button>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-header">Session <span>▾</span></div>
-      <div class="section-body">
-        <div id="me-info" class="user-info"></div>
-        <div class="chip-row">
-          <button id="btn-me">GET /auth/me</button>
-          <button id="btn-refresh" class="secondary">Refresh tokens</button>
-        </div>
-        <button id="btn-logout" class="danger">Logout</button>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-header">Change Password <span>▾</span></div>
-      <div class="section-body">
-        <div>
-          <label for="cp-current">Current password</label>
-          <input id="cp-current" type="password" placeholder="••••••••" autocomplete="current-password" />
-        </div>
-        <div>
-          <label for="cp-new">New password</label>
-          <input id="cp-new" type="password" placeholder="••••••••" autocomplete="new-password" />
-        </div>
-        <button id="btn-change-password">Change password</button>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-header">Health <span>▾</span></div>
-      <div class="section-body">
-        <button id="btn-health" class="secondary">GET /health</button>
-      </div>
-    </div>
-
-  </div><!-- /#panel -->
-
-  <!-- RESIZE HANDLE -->
-  <div id="resize-handle" role="separator" aria-label="Resize panels"></div>
-
-  <!-- RIGHT PANEL -->
-  <div id="right-panel">
-    <div id="token-bar">
-      <div class="token-chip">
-        <span class="label">access</span>
-        <span class="val empty" id="access-display">none</span>
-        <button class="copy-btn" id="btn-copy-access">copy</button>
-      </div>
-      <div class="token-chip">
-        <span class="label">refresh</span>
-        <span class="val empty" id="refresh-display">none</span>
-        <button class="copy-btn" id="btn-copy-refresh">copy</button>
-      </div>
-      <button class="secondary copy-btn" id="btn-clear-log" style="margin-left:auto">clear log</button>
-    </div>
-    <div id="log">
-      <div id="empty-log">Make a request to see the response here.</div>
-    </div>
-  </div>
-
-</div><!-- /#main -->
-
-<script src="/app.js"></script>
-</body>
+    <script src="/app.js"></script>
+  </body>
 </html>

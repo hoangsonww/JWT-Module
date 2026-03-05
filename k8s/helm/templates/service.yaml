@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: { { include "jwt-module.fullname" . } }
+  labels: { { - include "jwt-module.labels" . | nindent 4 } }
+spec:
+  type: { { .Values.service.type } }
+  ports:
+    - name: http
+      port: { { .Values.service.port } }
+      targetPort: { { .Values.service.targetPort } }
+      protocol: TCP
+  selector: { { - include "jwt-module.selectorLabels" . | nindent 4 } }

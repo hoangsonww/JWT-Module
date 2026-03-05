@@ -1,0 +1,11 @@
+apiVersion: v2
+name: jwt-module
+description: JWT Authentication Module — Express + TypeScript
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - jwt
+  - authentication
+  - express
+  - typescript

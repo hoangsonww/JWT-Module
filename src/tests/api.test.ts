@@ -25,9 +25,7 @@ afterEach(() => {
 const app = createApp(authService);
 
 async function registerUser(email: string, password = "Password1") {
-  const res = await request(app)
-    .post("/auth/register")
-    .send({ email, password });
+  const res = await request(app).post("/auth/register").send({ email, password });
   return res.body.tokens as { accessToken: string; refreshToken: string };
 }
 
@@ -66,9 +64,7 @@ describe("API integration tests", () => {
     });
 
     it("should return 400 for missing fields", async () => {
-      const res = await request(app)
-        .post("/auth/register")
-        .send({ email: "missing@example.com" });
+      const res = await request(app).post("/auth/register").send({ email: "missing@example.com" });
 
       expect(res.status).toBe(400);
       expect(res.body.error.code).toBe("INVALID_INPUT");
@@ -221,9 +217,7 @@ describe("API integration tests", () => {
     });
 
     it("should return 400 when refreshToken is missing", async () => {
-      const res = await request(app)
-        .post("/auth/logout")
-        .send({});
+      const res = await request(app).post("/auth/logout").send({});
 
       expect(res.status).toBe(400);
     });
@@ -380,9 +374,7 @@ describe("API integration tests", () => {
     });
 
     it("should return 401 without Bearer token", async () => {
-      const res = await request(app)
-        .delete("/auth/me")
-        .send({ password: "Password1" });
+      const res = await request(app).delete("/auth/me").send({ password: "Password1" });
 
       expect(res.status).toBe(401);
     });

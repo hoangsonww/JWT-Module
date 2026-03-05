@@ -1,0 +1,19 @@
+replicaCount: 1
+
+config:
+  NODE_ENV: "development"
+  CORS_ORIGIN: "*"
+
+resources:
+  requests:
+    cpu: 64m
+    memory: 64Mi
+  limits:
+    cpu: 256m
+    memory: 128Mi
+
+autoscaling:
+  enabled: false
+
+pdb:
+  enabled: false

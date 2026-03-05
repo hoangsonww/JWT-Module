@@ -1,0 +1,29 @@
+{
+  "properties": {
+    "displayName": "Allowed Locations for JWT Module",
+    "description": "Restricts resource deployment to approved Azure regions",
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "parameters": {
+      "allowedLocations": {
+        "type": "Array",
+        "metadata": {
+          "displayName": "Allowed locations",
+          "description": "The list of allowed locations for resources"
+        },
+        "defaultValue": ["eastus", "eastus2", "westus2"]
+      }
+    },
+    "policyRule": {
+      "if": {
+        "not": {
+          "field": "location",
+          "in": "[parameters('allowedLocations')]"
+        }
+      },
+      "then": {
+        "effect": "deny"
+      }
+    }
+  }
+}

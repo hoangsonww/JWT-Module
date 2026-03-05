@@ -66,9 +66,9 @@ describe("AuthService", () => {
     });
 
     it("should throw INVALID_EMAIL for malformed email", async () => {
-      await expect(
-        register({ email: "not-an-email", password: "password123" }),
-      ).rejects.toThrow(AuthError);
+      await expect(register({ email: "not-an-email", password: "password123" })).rejects.toThrow(
+        AuthError,
+      );
 
       try {
         await register({ email: "not-an-email", password: "password123" });
@@ -112,9 +112,9 @@ describe("AuthService", () => {
     });
 
     it("should throw INVALID_CREDENTIALS for non-existent email", async () => {
-      await expect(
-        login({ email: "noexist@example.com", password: "password1" }),
-      ).rejects.toThrow(AuthError);
+      await expect(login({ email: "noexist@example.com", password: "password1" })).rejects.toThrow(
+        AuthError,
+      );
 
       try {
         await login({ email: "noexist@example.com", password: "password1" });
@@ -223,9 +223,9 @@ describe("AuthService", () => {
 
   describe("register - password validation", () => {
     it("should throw WEAK_PASSWORD for weak passwords", async () => {
-      await expect(
-        register({ email: "weakpw@example.com", password: "abc" }),
-      ).rejects.toThrow(AuthError);
+      await expect(register({ email: "weakpw@example.com", password: "abc" })).rejects.toThrow(
+        AuthError,
+      );
 
       try {
         await register({ email: "weakpw@example.com", password: "abc" });
@@ -283,9 +283,7 @@ describe("AuthService", () => {
       });
       const userId = decodeUserId(tokens.accessToken);
 
-      await expect(
-        changePassword(userId, "password123", "newpassword1"),
-      ).resolves.toBeUndefined();
+      await expect(changePassword(userId, "password123", "newpassword1")).resolves.toBeUndefined();
     });
 
     it("should throw INVALID_CREDENTIALS for wrong current password", async () => {
@@ -295,9 +293,7 @@ describe("AuthService", () => {
       });
       const userId = decodeUserId(tokens.accessToken);
 
-      await expect(
-        changePassword(userId, "wrongpass1", "newpassword1"),
-      ).rejects.toThrow(AuthError);
+      await expect(changePassword(userId, "wrongpass1", "newpassword1")).rejects.toThrow(AuthError);
 
       try {
         await changePassword(userId, "wrongpass1", "newpassword1");
@@ -313,9 +309,7 @@ describe("AuthService", () => {
       });
       const userId = decodeUserId(tokens.accessToken);
 
-      await expect(
-        changePassword(userId, "password123", "abc"),
-      ).rejects.toThrow(AuthError);
+      await expect(changePassword(userId, "password123", "abc")).rejects.toThrow(AuthError);
 
       try {
         await changePassword(userId, "password123", "abc");
@@ -325,9 +319,9 @@ describe("AuthService", () => {
     });
 
     it("should throw USER_NOT_FOUND for non-existent userId", async () => {
-      await expect(
-        changePassword("nonexistent-id", "password123", "newpassword1"),
-      ).rejects.toThrow(AuthError);
+      await expect(changePassword("nonexistent-id", "password123", "newpassword1")).rejects.toThrow(
+        AuthError,
+      );
 
       try {
         await changePassword("nonexistent-id", "password123", "newpassword1");
