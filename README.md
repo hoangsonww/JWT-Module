@@ -27,6 +27,7 @@ graph LR
     Auth -->|read/write| Store[(In-Memory Store)]
 ```
 
+> [!IMPORTANT]
 > **Note:** All data is lost on restart. For production use, implement a persistent backing store behind the existing interfaces.
 
 ---
@@ -54,8 +55,8 @@ graph LR
 
 ```bash
 # Clone the repository
-git clone <repo-url> jwt-module
-cd jwt-module
+git clone https://github.com/hoangsonww/JWT-Module.git
+cd JWT-Module
 
 # Install dependencies
 npm install
