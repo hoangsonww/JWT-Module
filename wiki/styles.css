@@ -130,13 +130,46 @@ a:hover {
 
 .menu-toggle {
   display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
   background: none;
   border: 1px solid var(--border-primary);
   border-radius: 6px;
   color: var(--text-primary);
-  padding: 6px 10px;
+  padding: 0;
   cursor: pointer;
   font-size: 18px;
+  line-height: 1;
+}
+
+.menu-toggle-icon {
+  position: relative;
+  display: block;
+  width: 16px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.menu-toggle-icon::before,
+.menu-toggle-icon::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 16px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.menu-toggle-icon::before {
+  top: -5px;
+}
+
+.menu-toggle-icon::after {
+  top: 5px;
 }
 
 /* ---- Layout ---- */
@@ -775,7 +808,7 @@ code:not(.code-block code) {
   }
 
   .menu-toggle {
-    display: block;
+    display: flex;
   }
 
   .header-nav {
