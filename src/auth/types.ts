@@ -24,3 +24,5 @@ export interface LoginInput {
   email: string;
   password: string;
 }
+
+export type UserPublic = Omit<User, "passwordHash">;

@@ -33,6 +33,15 @@ export const DeleteAccountSchema = z.object({
   password: z.string().min(1, "password is required"),
 });
 
+export const ForgotPasswordSchema = z.object({
+  email: z.string().min(1, "email is required"),
+});
+
+export const ResetPasswordSchema = z.object({
+  token: z.string().min(1, "token is required"),
+  newPassword: z.string().min(1, "newPassword is required"),
+});
+
 export function zodError(res: Response, err: z.ZodError): void {
   const message = err.issues.map((e) => e.message).join(", ");
   res.status(400).json({ error: { code: "INVALID_INPUT", message } });

@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
+import { createId } from "@paralleldrive/cuid2";
 import type { TokenPayload } from "../auth/types";
 import { verifyAccessToken } from "../auth/token";
 import { AuthError } from "../auth/errors";
@@ -39,11 +40,20 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
   }
 }
 
+export function attachRequestId(req: Request, res: Response, next: NextFunction): void {
+  const id = (req.headers["x-request-id"] as string | undefined) ?? createId();
+  res.setHeader("x-request-id", id);
+  next();
+}
+
 export function requestLogger(req: Request, res: Response, next: NextFunction): void {
   const start = Date.now();
   res.on("finish", () => {
     const duration = Date.now() - start;
-    process.stdout.write(`${req.method} ${req.path} ${res.statusCode} ${duration}ms\n`);
+    const requestId = res.getHeader("x-request-id") ?? "-";
+    process.stdout.write(
+      `${req.method} ${req.path} ${res.statusCode} ${duration}ms [${requestId}]\n`,
+    );
   });
   next();
 }

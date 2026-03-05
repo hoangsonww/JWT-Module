@@ -9,7 +9,13 @@
       "Bash(npm test:*)",
       "Bash(netstat:*)",
       "Bash(start:*)",
-      "Bash(npx prettier:*)"
+      "Bash(npx prettier:*)",
+      "Bash(PORT=5001 npx ts-node:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd:*)",
+      "Bash(curl:*)",
+      "Bash(PORT=5001 ADMIN_API_KEY=devadmin123 npx ts-node:*)",
+      "Bash(xargs -I{} cmd //c \"taskkill /PID {} /F\")"
     ]
   }
 }

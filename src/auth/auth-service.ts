@@ -1,8 +1,11 @@
 import { createId } from "@paralleldrive/cuid2";
 import { AuthError } from "./errors";
+import { authEvents } from "./events";
 import { hashPassword, validatePasswordStrength, verifyPassword } from "./password";
+import { createResetToken, consumeResetToken } from "./reset-tokens";
+import { revokeAllUserSessions, revokeSessionByToken } from "./session";
 import { generateTokens, revokeRefreshToken, verifyRefreshToken } from "./token";
-import type { AuthTokens, LoginInput, RegisterInput, User } from "./types";
+import type { AuthTokens, LoginInput, RegisterInput, User, UserPublic } from "./types";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -38,6 +41,7 @@ function revokeAllUserTokens(userId: string): void {
     for (const token of tokens) revokeRefreshToken(token);
     tokens.clear();
   }
+  revokeAllUserSessions(userId);
 }
 
 export async function register(input: RegisterInput): Promise<AuthTokens> {
@@ -67,6 +71,7 @@ export async function register(input: RegisterInput): Promise<AuthTokens> {
 
   const tokens = generateTokens({ userId: id, email });
   registerRefreshToken(id, tokens.refreshToken);
+  authEvents.emit("register", { userId: id, email });
   return tokens;
 }
 
@@ -102,6 +107,7 @@ export async function login(input: LoginInput): Promise<AuthTokens> {
 
   const tokens = generateTokens({ userId: user.id, email: user.email });
   registerRefreshToken(user.id, tokens.refreshToken);
+  authEvents.emit("login", { userId: user.id, email: user.email });
   return tokens;
 }
 
@@ -118,6 +124,7 @@ export function refreshTokens(refreshToken: string): AuthTokens {
 
   const tokens = generateTokens({ userId: user.id, email: user.email });
   registerRefreshToken(user.id, tokens.refreshToken);
+  authEvents.emit("token:refresh", { userId: user.id });
   return tokens;
 }
 
@@ -129,10 +136,12 @@ export function logout(refreshToken: string): void {
   try {
     const payload = verifyRefreshToken(refreshToken);
     userTokens.get(payload.userId)?.delete(refreshToken);
+    authEvents.emit("logout", { userId: payload.userId });
   } catch {
     // token may already be expired/invalid — still revoke it
   }
   revokeRefreshToken(refreshToken);
+  revokeSessionByToken(refreshToken);
 }
 
 export async function changePassword(
@@ -151,10 +160,12 @@ export async function changePassword(
   validatePasswordStrength(newPassword);
   user.passwordHash = await hashPassword(newPassword);
   revokeAllUserTokens(userId);
+  authEvents.emit("password:change", { userId });
 }
 
 export function logoutAll(userId: string): void {
   revokeAllUserTokens(userId);
+  authEvents.emit("logout:all", { userId });
 }
 
 export async function updateEmail(
@@ -171,6 +182,7 @@ export async function updateEmail(
   const valid = await verifyPassword(password, user.passwordHash);
   if (!valid) throw new AuthError("INVALID_CREDENTIALS", "Password is incorrect");
   user.email = email;
+  authEvents.emit("email:change", { userId, newEmail: email });
 }
 
 export async function deleteAccount(userId: string, password: string): Promise<void> {
@@ -181,6 +193,36 @@ export async function deleteAccount(userId: string, password: string): Promise<v
   revokeAllUserTokens(userId);
   userTokens.delete(userId);
   users.delete(userId);
+  authEvents.emit("account:delete", { userId });
+}
+
+export function getUserCount(): number {
+  return users.size;
+}
+
+export function listUsers(): UserPublic[] {
+  return Array.from(users.values()).map(({ id, email, createdAt }) => ({ id, email, createdAt }));
+}
+
+export async function requestPasswordReset(email: string): Promise<string> {
+  const normalizedEmail = email.toLowerCase().trim();
+  const user = findByEmail(normalizedEmail);
+  if (!user) {
+    throw new AuthError("USER_NOT_FOUND", "No account found with this email");
+  }
+  const token = createResetToken(user.id, normalizedEmail);
+  authEvents.emit("password:reset:request", { email: normalizedEmail });
+  return token;
+}
+
+export async function resetPassword(token: string, newPassword: string): Promise<void> {
+  const { userId } = consumeResetToken(token);
+  const user = users.get(userId);
+  if (!user) throw new AuthError("USER_NOT_FOUND", "User not found");
+  validatePasswordStrength(newPassword);
+  user.passwordHash = await hashPassword(newPassword);
+  revokeAllUserTokens(userId);
+  authEvents.emit("password:reset", { userId, email: user.email });
 }
 
 export function clearLoginAttempts(): void {

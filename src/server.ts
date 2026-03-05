@@ -19,13 +19,25 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 
 app.listen(PORT, () => {
   console.log(`JWT module running on http://localhost:${PORT}`);
-  console.log("\nEndpoints:");
+  console.log("\nAuth endpoints:");
   console.log("  POST   /auth/register");
   console.log("  POST   /auth/login");
   console.log("  POST   /auth/refresh");
   console.log("  POST   /auth/logout");
-  console.log("  POST   /auth/change-password  (requires Bearer token)");
-  console.log("  GET    /auth/me               (requires Bearer token)");
+  console.log("  POST   /auth/logout-all         (requires Bearer token)");
+  console.log("  POST   /auth/change-password    (requires Bearer token)");
+  console.log("  POST   /auth/forgot-password");
+  console.log("  POST   /auth/reset-password");
+  console.log("  GET    /auth/me                 (requires Bearer token)");
+  console.log("  PATCH  /auth/me                 (requires Bearer token)");
+  console.log("  DELETE /auth/me                 (requires Bearer token)");
+  console.log("  GET    /auth/sessions            (requires Bearer token)");
+  console.log("  DELETE /auth/sessions/:id        (requires Bearer token)");
+  console.log("\nAdmin endpoints (requires X-Admin-Key header):");
+  console.log("  GET    /admin/users");
+  console.log("  GET    /admin/audit");
+  console.log("  GET    /admin/stats");
+  console.log("\nSystem:");
   console.log("  GET    /health");
   console.log(`\n  UI     http://localhost:${PORT}/`);
 });
